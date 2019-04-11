@@ -5,10 +5,10 @@ import 'package:ep_feedmill/module/shared_preferences_module.dart';
 import 'package:ep_feedmill/res/route.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/res/theme.dart';
-import 'package:ep_feedmill/screen/home_screen.dart';
-import 'package:ep_feedmill/screen/house_keeping_screen.dart';
-import 'package:ep_feedmill/screen/login_screen.dart';
-import 'package:ep_feedmill/screen/premix/premix.dart';
+import 'package:ep_feedmill/screen/home/home_screen.dart';
+import 'package:ep_feedmill/screen/housekeeping/housekeeping_screen.dart';
+import 'package:ep_feedmill/screen/login/login_screen.dart';
+import 'package:ep_feedmill/screen/premix/premix_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(App());

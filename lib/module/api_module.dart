@@ -3,10 +3,18 @@ import 'dart:convert';
 import 'package:ep_feedmill/model/api_response.dart';
 import 'package:ep_feedmill/model/auth.dart';
 import 'package:ep_feedmill/model/item_packing.dart';
+import 'package:ep_feedmill/model/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/model/user.dart';
+import 'package:ep_feedmill/module/shared_preferences_module.dart';
 import 'package:http/http.dart';
 
 class ApiModule {
+  static final _instance = ApiModule._internal();
+
+  factory ApiModule() => _instance;
+
+  ApiModule._internal();
+
   static const _globalUrl =
       "http://epgroup.dlinkddns.com:5030/eperp/index.php?r=";
   static const _localUrl = "http://192.168.8.1:8833/eperp/index.php?r=";
@@ -15,6 +23,20 @@ class ApiModule {
   static const _housekeepingModule = "apiMobileFeedmill/getHouseKeeping";
 
   bool isLocal = true;
+
+  String constructUrl(String module) {
+    if (isLocal) {
+      return _localUrl + module;
+    }
+    return _globalUrl + module;
+  }
+
+  String validateResponse(Response response) {
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    throw Exception('Connection Failed');
+  }
 
   Future<ApiResponse<Auth>> login(
       String username, String password, String email) async {
@@ -27,32 +49,24 @@ class ApiModule {
   }
 
   Future<ApiResponse<List<ItemPacking>>> getItemPacking() async {
-    final username = "geoffrey.lee";
-    final password = "12345";
-
-    String basicAuth = User(username, password).getCredential();
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
 
     final response = await get(
       constructUrl(_housekeepingModule) + "&type=item_packing",
       headers: {'authorization': basicAuth},
     );
-
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
 
-  String constructUrl(String module) {
-    if (isLocal) {
-      return _localUrl + module;
-    } else {
-      return _globalUrl + module;
-    }
-  }
-
-  String validateResponse(Response response) {
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      throw Exception('Connection Failed');
-    }
+  Future<ApiResponse<List<MrfPremixPlanDoc>>> getMrfPremixPlanDoc() async {
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
+    
+    final response = await get(
+      constructUrl(_housekeepingModule) + "&type=mrf_premix_plan_doc",
+      headers: {'authorization': basicAuth},
+    );
+    return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
 }

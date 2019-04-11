@@ -24,10 +24,15 @@ class AppDb {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, _dbName);
 
-    return await openDatabase(path, version: _version,
-        onCreate: (Database db, int version) async {
-      await db.execute(DbSql.createItemPackingTable);
-      await db.execute(DbSql.createTempPremixDetailTable);
-    });
+    return await openDatabase(
+      path,
+      version: _version,
+      onCreate: (Database db, int version) async {
+        await db.execute(DbSql.createItemPackingTable);
+        await db.execute(DbSql.createTempPremixDetailTable);
+        await db.execute(DbSql.createMrfPremixPlanDocTable);
+        await db.execute(DbSql.createMrfPremixPlanDocDetailTable);
+      },
+    );
   }
 }

@@ -3,6 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
 class BluetoothModule {
+
+  static final _instance = BluetoothModule._internal();
+
+  factory BluetoothModule() => _instance;
+
+  BluetoothModule._internal();
+
   static const MethodChannel _channel =
       const MethodChannel("bluetooth.epfeedmill.flutter.io/method");
 

@@ -1,7 +1,7 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
-import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/model/item_packing.dart';
 import 'package:ep_feedmill/res/string.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -36,27 +36,29 @@ class _IngredientListState extends State<IngredientList> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(Strings.skuCode,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey)),
-                              Text(
-                                list[position].skuCode,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(Strings.skuCode,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                Text(
+                                  list[position].skuCode,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                        )),
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: RaisedButton.icon(
                             icon: Icon(FontAwesomeIcons.weight),
                             onPressed: () {
-                              _premixBloc.manualSelectItemPacking(list[position].id);
+                              _premixBloc
+                                  .manualSelectItemPacking(list[position].id);
                             },
                             label: Text("Enter Weight"),
                           ),

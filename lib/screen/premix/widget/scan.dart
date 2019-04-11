@@ -28,25 +28,25 @@ class CodeInput extends StatefulWidget {
 }
 
 class _CodeInputState extends State<CodeInput> {
-  final _controller = new TextEditingController();
+  final _scanController = TextEditingController();
   Timer _debounce;
 
   @override
   void dispose() {
-    _controller.dispose();
+    _scanController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final premixBloc = BlocProvider.of<PremixBloc>(context);
-    _controller.addListener(() {
+    _scanController.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
-        String text = _controller.text;
+        String text = _scanController.text;
         if (text.isNotEmpty) {
           premixBloc.scan(int.tryParse(text));
-          _controller.text = "";
+          _scanController.text = "";
         }
       });
     });
@@ -64,7 +64,8 @@ class _CodeInputState extends State<CodeInput> {
           Expanded(
             child: TextFormField(
               keyboardType: TextInputType.numberWithOptions(),
-              controller: _controller,
+              controller: _scanController,
+              autofocus: true,
               decoration: InputDecoration(
                   border: OutlineInputBorder(), labelText: Strings.ingredient),
             ),
@@ -89,40 +90,61 @@ class _SelectedIngredientState extends State<SelectedIngredient> {
       child: StreamBuilder<SelectedItemPacking>(
           stream: premixBloc.selectedItemPackingStream,
           builder: (context, snapshot) {
-            var isEntered = false;
+            var leftIcon = Icons.arrow_upward;
+            var rightIcon = Icons.arrow_upward;
+            var iconColor = IconTheme.of(context).color;
             var firstLine = "Please press above and scan";
             var secondLine = "";
 
             if (snapshot.connectionState != ConnectionState.waiting) {
               if (snapshot.data != null) {
-                isEntered = true;
-                firstLine = snapshot.data.skuName;
-                secondLine = snapshot.data.skuCode +
-                    " (${snapshot.data.weight.toString()} kg)";
+                if (snapshot.data.isError) {
+                  leftIcon = Icons.error;
+                  rightIcon = Icons.error;
+                  iconColor = Theme.of(context).errorColor;
+                  firstLine = snapshot.data.errorMessage;
+                  secondLine = "";
+                } else {
+                  leftIcon = Icons.landscape;
+                  rightIcon = Icons.cancel;
+                  iconColor = Theme.of(context).primaryColor;
+                  firstLine = snapshot.data.skuName;
+                  secondLine = snapshot.data.skuCode +
+                      " (${snapshot.data.weight.toString()} kg)";
+                }
               }
             }
 
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
-                  isEntered ? Icons.landscape : Icons.arrow_upward,
-                  size: 48,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    leftIcon,
+                    color: iconColor,
+                    size: 48,
+                  ),
                 ),
                 Column(
                   children: <Widget>[
                     Text(firstLine,
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold)),
-                    Text(secondLine,
-                        style:
-                            TextStyle(fontSize: 16, color: Colors.grey[700])),
+                    Text(
+                      secondLine,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[700],
+                      ),
+                    ),
                   ],
                 ),
                 IconButton(
                   iconSize: 48,
                   icon: Icon(
-                    isEntered ? Icons.cancel : Icons.arrow_upward,
+                    rightIcon,
+                    color: iconColor,
                   ),
                   onPressed: () {
                     premixBloc.clearSelectedItemPacking();

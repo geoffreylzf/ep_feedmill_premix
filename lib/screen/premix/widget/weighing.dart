@@ -11,9 +11,19 @@ class Weighing extends StatefulWidget {
 }
 
 class _WeighingState extends State<Weighing> {
+  TextEditingController weightController;
 
-  final weightController = TextEditingController();
-  final weightFocusNode = FocusNode();
+  @override
+  void initState() {
+    super.initState();
+    weightController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    weightController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,69 +32,76 @@ class _WeighingState extends State<Weighing> {
 
     return Column(
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            StreamBuilder<bool>(
-                stream: bluetoothBloc.isBluetoothEnabledStream,
-                initialData: false,
-                builder: (context, snapshot) {
-                  return IconButton(
-                    icon: Icon(Icons.bluetooth),
-                    iconSize: 48,
-                    onPressed: snapshot.data
-                        ? () => showBluetoothDevices(context, bluetoothBloc)
-                        : null,
-                    color: Theme.of(context).primaryColor,
-                    splashColor: Theme.of(context).accentColor,
-                  );
-                }),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  StreamBuilder<String>(
-                      stream: bluetoothBloc.statusStream,
-                      builder: (context, snapshot) {
-                        return Text(
-                          "Status : " + snapshot.data.toString(),
-                          style: TextStyle(fontSize: 12),
-                        );
-                      }),
-                  StreamBuilder<String>(
-                      stream: bluetoothBloc.nameStream,
-                      builder: (context, snapshot) {
-                        return Text(
-                            "Name : " +
-                                ((snapshot.data != null) ? snapshot.data : ""),
-                            style: TextStyle(fontSize: 12));
-                      }),
-                  StreamBuilder<String>(
-                      stream: bluetoothBloc.addressStream,
-                      builder: (context, snapshot) {
-                        return Text(
-                            "Address : " +
-                                ((snapshot.data != null) ? snapshot.data : ""),
-                            style: TextStyle(fontSize: 12));
-                      }),
-                ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: <Widget>[
+              StreamBuilder<bool>(
+                  stream: bluetoothBloc.isBluetoothEnabledStream,
+                  initialData: false,
+                  builder: (context, snapshot) {
+                    return IconButton(
+                      icon: Icon(Icons.bluetooth),
+                      iconSize: 48,
+                      onPressed: snapshot.data
+                          ? () => showBluetoothDevices(context, bluetoothBloc)
+                          : null,
+                      color: Theme.of(context).primaryColor,
+                      splashColor: Theme.of(context).accentColor,
+                    );
+                  }),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    StreamBuilder<String>(
+                        stream: bluetoothBloc.statusStream,
+                        builder: (context, snapshot) {
+                          return Text(
+                            "Status : " + snapshot.data.toString(),
+                            style: TextStyle(fontSize: 12),
+                          );
+                        }),
+                    StreamBuilder<String>(
+                        stream: bluetoothBloc.nameStream,
+                        builder: (context, snapshot) {
+                          return Text(
+                              "Name : " +
+                                  ((snapshot.data != null)
+                                      ? snapshot.data
+                                      : ""),
+                              style: TextStyle(fontSize: 12));
+                        }),
+                    StreamBuilder<String>(
+                        stream: bluetoothBloc.addressStream,
+                        builder: (context, snapshot) {
+                          return Text(
+                              "Address : " +
+                                  ((snapshot.data != null)
+                                      ? snapshot.data
+                                      : ""),
+                              style: TextStyle(fontSize: 12));
+                        }),
+                  ],
+                ),
               ),
-            ),
-            StreamBuilder<bool>(
-                stream: bluetoothBloc.isBluetoothEnabledStream,
-                initialData: false,
-                builder: (context, snapshot) {
-                  return IconButton(
-                    icon: Icon(Icons.refresh),
-                    iconSize: 48,
-                    onPressed: snapshot.data
-                        ? () => bluetoothBloc.connectDevice()
-                        : null,
-                    color: Theme.of(context).primaryColor,
-                    splashColor: Theme.of(context).accentColor,
-                  );
-                }),
-          ],
+              StreamBuilder<bool>(
+                  stream: bluetoothBloc.isBluetoothEnabledStream,
+                  initialData: false,
+                  builder: (context, snapshot) {
+                    return IconButton(
+                      icon: Icon(Icons.refresh),
+                      iconSize: 48,
+                      onPressed: snapshot.data
+                          ? () => bluetoothBloc.connectDevice()
+                          : null,
+                      color: Theme.of(context).primaryColor,
+                      splashColor: Theme.of(context).accentColor,
+                    );
+                  }),
+            ],
+          ),
         ),
         Row(
           children: <Widget>[
@@ -100,15 +117,17 @@ class _WeighingState extends State<Weighing> {
                       }
                       return RaisedButton.icon(
                         onPressed: () {
-                          weightController.text =
-                              bluetoothBloc.getWeighingResult();
-                          premixBloc.setIsWeighingByBt(true);
+                          var weight = double.tryParse(bluetoothBloc.getWeighingResult());
+                          if (weight != null) {
+                            weightController.text = weight.toStringAsFixed(2);
+                            premixBloc.setIsWeighingByBt(true);
+                          }
                         },
                         icon: Icon(Icons.arrow_downward),
                         label: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text("$weight KG",
-                              style: TextStyle(fontSize: 24)),
+                              style: TextStyle(fontSize: 16)),
                         ),
                       );
                     }),
@@ -117,7 +136,7 @@ class _WeighingState extends State<Weighing> {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -131,7 +150,6 @@ class _WeighingState extends State<Weighing> {
                       return TextFormField(
                         enabled: !isBt,
                         controller: weightController,
-                        focusNode: weightFocusNode,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
@@ -156,11 +174,22 @@ class _WeighingState extends State<Weighing> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: RaisedButton.icon(
-                    onPressed: () {
-                      premixBloc.insertTempPremixDetail(double.tryParse(weightController.text));
-                    },
-                    icon: Icon(Icons.save),
-                    label: Text(Strings.save.toUpperCase())),
+                  onPressed: () {
+                    premixBloc
+                        .insertTempPremixDetail(
+                            double.tryParse(weightController.text))
+                        .then((success) {
+                      if (success) {
+                        weightController.text = "";
+                        premixBloc.setIsWeighingByBt(false);
+                      }
+                    });
+                  },
+                  icon: Icon(Icons.save),
+                  label: Text(
+                    Strings.save.toUpperCase(),
+                  ),
+                ),
               ),
             ),
           ],

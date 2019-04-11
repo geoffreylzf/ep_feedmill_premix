@@ -1,5 +1,5 @@
 import 'package:ep_feedmill/module/api_module.dart';
-import 'package:ep_feedmill/db/item_packing_dao.dart';
+import 'package:ep_feedmill/db/dao/item_packing_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:flutter/material.dart';
 

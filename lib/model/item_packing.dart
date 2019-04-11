@@ -9,7 +9,7 @@ class ItemPacking {
     this.skuName,
   });
 
-  factory ItemPacking.fromJson(Map<String, dynamic> json) => new ItemPacking(
+  factory ItemPacking.fromJson(Map<String, dynamic> json) => ItemPacking(
         id: json["id"],
         skuCode: json["sku_code"],
         skuName: json["sku_name"],

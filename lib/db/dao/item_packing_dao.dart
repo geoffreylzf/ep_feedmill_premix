@@ -24,6 +24,18 @@ class ItemPackingDao {
     return list;
   }
 
+  Future<List<ItemPacking>> getAllNotInTemp() async {
+    var db = await AppDb().database;
+    var res = await db.rawQuery("""
+    SELECT * 
+    FROM item_packing
+    WHERE id NOT in (SELECT item_packing_id FROM temp_premix_detail)
+    """);
+    List<ItemPacking> list =
+        res.isNotEmpty ? res.map((c) => ItemPacking.fromJson(c)).toList() : [];
+    return list;
+  }
+
   Future<int> deleteAll() async {
     var db = await AppDb().database;
     var res = await db.delete(_table);
