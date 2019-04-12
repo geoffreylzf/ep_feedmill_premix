@@ -35,7 +35,7 @@ class TempPremixDetailDao {
     return res.isNotEmpty ? TempPremixDetail.fromJson(res.first) : null;
   }
 
-  Future<List<TempPremixDetailWithIp>> getAll() async {
+  Future<List<TempPremixDetailWithInfo>> getAll() async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT 
@@ -47,8 +47,8 @@ class TempPremixDetailDao {
       ON temp_premix_detail.item_packing_id = item_packing.id
     ORDER BY temp_premix_detail.id DESC
     """);
-    List<TempPremixDetailWithIp> list = res.isNotEmpty
-        ? res.map((c) => TempPremixDetailWithIp.fromJson(c)).toList()
+    List<TempPremixDetailWithInfo> list = res.isNotEmpty
+        ? res.map((c) => TempPremixDetailWithInfo.fromJson(c)).toList()
         : [];
     return list;
   }
@@ -64,28 +64,39 @@ class TempPremixDetailDao {
   }
 }
 
-class TempPremixDetailWithIp {
-  int id, itemPackingId;
+class TempPremixDetailWithInfo extends TempPremixDetail {
   String skuName, skuCode;
-  double grossWeight, tareWeight, netWeight;
 
-  TempPremixDetailWithIp(
-      {this.id,
-      this.itemPackingId,
-      this.skuCode,
-      this.skuName,
-      this.grossWeight,
-      this.tareWeight,
-      this.netWeight});
+  TempPremixDetailWithInfo({
+    id,
+    mrfPremixPlanDetailId,
+    itemPackingId,
+    grossWeight,
+    tareWeight,
+    netWeight,
+    isBt,
+    this.skuCode,
+    this.skuName,
+  }) : super(
+          id: id,
+          mrfPremixPlanDetailId: mrfPremixPlanDetailId,
+          itemPackingId: itemPackingId,
+          grossWeight: grossWeight,
+          tareWeight: tareWeight,
+          netWeight: netWeight,
+          isBt: isBt,
+        );
 
-  factory TempPremixDetailWithIp.fromJson(Map<String, dynamic> json) =>
-      new TempPremixDetailWithIp(
+  factory TempPremixDetailWithInfo.fromJson(Map<String, dynamic> json) =>
+      new TempPremixDetailWithInfo(
         id: json["id"],
         itemPackingId: json["item_packing_id"],
-        skuCode: json["sku_code"],
-        skuName: json["sku_name"],
+        mrfPremixPlanDetailId: json["mrf_premix_plan_detail_id"],
         grossWeight: json["gross_weight"],
         tareWeight: json["tare_weight"],
         netWeight: json["net_weight"],
+        isBt: json["is_bt"],
+        skuCode: json["sku_code"],
+        skuName: json["sku_name"],
       );
 }

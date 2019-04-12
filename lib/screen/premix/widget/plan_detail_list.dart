@@ -1,21 +1,21 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
-import 'package:ep_feedmill/model/item_packing.dart';
+import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class IngredientList extends StatefulWidget {
+class PlanDetailList extends StatefulWidget {
   @override
-  _IngredientListState createState() => _IngredientListState();
+  _PlanDetailListState createState() => _PlanDetailListState();
 }
 
-class _IngredientListState extends State<IngredientList> {
+class _PlanDetailListState extends State<PlanDetailList> {
   @override
   Widget build(BuildContext context) {
     final _premixBloc = BlocProvider.of<PremixBloc>(context);
-    return StreamBuilder<List<ItemPacking>>(
-        stream: _premixBloc.itemPackingListStream,
+    return StreamBuilder<List<MrfPremixPlanDetailWithInfo>>(
+        stream: _premixBloc.planDetailWithInfoListStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -29,7 +29,7 @@ class _IngredientListState extends State<IngredientList> {
                   title: Row(
                     children: <Widget>[
                       Expanded(child: Text(list[position].skuName)),
-                      Text("1.25 Kg"),
+                      Text("${list[position].formulaWeight.toStringAsFixed(2)} Kg"),
                     ],
                   ),
                   children: [
@@ -58,7 +58,7 @@ class _IngredientListState extends State<IngredientList> {
                             icon: Icon(FontAwesomeIcons.weight),
                             onPressed: () {
                               _premixBloc
-                                  .manualSelectItemPacking(list[position].id);
+                                  .manualSelectItemPacking(list[position].itemPackingId);
                             },
                             label: Text("Enter Weight"),
                           ),

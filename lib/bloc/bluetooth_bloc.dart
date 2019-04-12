@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/module/bluetooth_module.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
-import 'package:flutter/widgets.dart';
 import 'package:rxdart/subjects.dart';
 
 const _grossWeight = "G.W.:";
@@ -79,7 +78,7 @@ class BluetoothBloc extends BlocBase {
 
     _bluetooth.onRead().listen((data) {
       if (!_isDispose && _type == BluetoothType.Weighing) {
-        if (data.contains(_netWeight) && data.contains(_kg) ) {
+        if (data.contains(_netWeight) && data.contains(_kg)) {
           data = data.replaceAll(_netWeight, "");
           data = data.replaceAll(_kg, "");
           data = data.trim();
@@ -175,7 +174,5 @@ class BluetoothBloc extends BlocBase {
 abstract class BluetoothDelegate {
   void onBluetoothError(String message);
 }
-
-
 
 enum BluetoothType { Weighing, Printer }

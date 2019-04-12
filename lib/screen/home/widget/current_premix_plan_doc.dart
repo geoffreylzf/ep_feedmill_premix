@@ -16,6 +16,8 @@ class _CurrentPremixPlanDocState extends State<CurrentPremixPlanDoc> {
   Card build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     return Card(
+      color: Colors.white70,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -52,26 +54,28 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     return StreamBuilder<List<MrfPremixPlanDoc>>(
-        stream: homeBloc.mrfPremixPlanDocListStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          final list = snapshot.data;
-          return ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context, position) {
-              final doc = list[position];
-              return Column(
-                children: <Widget>[
-                  position == 0 ? Divider(height: 0) : Container(),
-                  ListTile(
+      stream: homeBloc.mrfPremixPlanDocListStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        final list = snapshot.data;
+        return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, position) {
+            final doc = list[position];
+            return Column(
+              children: <Widget>[
+                position == 0 ? Divider(height: 0) : Container(),
+                InkWell(
+                  child: ListTile(
                     dense: true,
                     isThreeLine: false,
                     title: Text(doc.recipeName),
                     subtitle: Text(doc.docNo),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
+                    onTap: () async {
+                      await Future.delayed(Duration(milliseconds: 100));
                       Navigator.push(
                         context,
                         SlideRightRoute(
@@ -80,11 +84,13 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
                       );
                     },
                   ),
-                  Divider(height: 0),
-                ],
-              );
-            },
-          );
-        });
+                ),
+                Divider(height: 0),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

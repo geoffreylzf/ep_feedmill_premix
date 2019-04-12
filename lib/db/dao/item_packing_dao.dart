@@ -43,8 +43,8 @@ class ItemPackingDao {
   }
 
   Future<ItemPacking> getById(int id) async {
-    var db = await AppDb().database;
-    var res = await db.query(_table, where: "id = ?", whereArgs: [id]);
+    final db = await AppDb().database;
+    final res = await db.query(_table, where: "id = ?", whereArgs: [id]);
     return res.isNotEmpty ? ItemPacking.fromJson(res.first) : null;
   }
 }

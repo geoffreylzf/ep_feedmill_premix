@@ -37,7 +37,7 @@ class MrfPremixPlanDoc {
         "doc_no": docNo,
         "doc_date": docDate,
         "item_packing_id": itemPackingId,
-        "remarks": recipeName,
+        "remarks": remarks,
         "total_batch": totalBatch,
         "mrf_premix_plan_detail_list":
             List<dynamic>.from(mrfPremixPlanDetailList.map((x) => x.toJson())),
@@ -49,7 +49,7 @@ class MrfPremixPlanDoc {
         "doc_no": docNo,
         "doc_date": docDate,
         "item_packing_id": itemPackingId,
-        "remarks": recipeName,
+        "remarks": remarks,
         "total_batch": totalBatch,
       };
 }

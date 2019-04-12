@@ -35,7 +35,7 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
   @override
   Widget build(BuildContext context) {
     final premixBloc = BlocProvider.of<PremixBloc>(context);
-    return StreamBuilder<List<TempPremixDetailWithIp>>(
+    return StreamBuilder<List<TempPremixDetailWithInfo>>(
       stream: premixBloc.tempPremixDetailListStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

@@ -14,6 +14,9 @@ class Strings {
   static const weightKg = "Weight (Kg)";
   static const password = "Password";
   static const save = "Save";
+  static const back = "Back";
+  static const cancel = "Cancel";
+  static const barcode = "Barcode";
   static const login = "Login";
   static const skuCode = "Sku Code";
   static const signOut = "Sign Out";

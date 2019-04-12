@@ -28,4 +28,75 @@ class MrfPremixPlanDetailDao {
     var db = await AppDb().database;
     return await db.delete(_table);
   }
+
+  Future<List<MrfPremixPlanDetailWithInfo>>
+      getByMrfPremixPlanDocIdWithInfoNotInTemp(int mrfPremixPlanDocId) async {
+    var db = await AppDb().database;
+    var res = await db.rawQuery("""
+    SELECT 
+    mrf_premix_plan_detail.*,
+    item_packing.sku_code,
+    item_packing.sku_name
+    FROM mrf_premix_plan_detail 
+    LEFT JOIN item_packing 
+      ON mrf_premix_plan_detail.item_packing_id = item_packing.id
+    WHERE mrf_premix_plan_doc_id = ?
+    AND item_packing.id NOT in (SELECT item_packing_id FROM temp_premix_detail)
+    """, [mrfPremixPlanDocId]);
+    return res.isNotEmpty
+        ? res.map((c) => MrfPremixPlanDetailWithInfo.fromJson(c)).toList()
+        : [];
+  }
+
+  Future<MrfPremixPlanDetailWithInfo> getByMrfPremixPlanDocIdItemPackingId(
+      int mrfPremixPlanDocId, int itemPackingId) async {
+    var db = await AppDb().database;
+    var res = await db.rawQuery("""
+    SELECT 
+    mrf_premix_plan_detail.*,
+    item_packing.sku_code,
+    item_packing.sku_name
+    FROM mrf_premix_plan_detail 
+    LEFT JOIN item_packing 
+      ON mrf_premix_plan_detail.item_packing_id = item_packing.id
+    WHERE mrf_premix_plan_doc_id = ?
+    AND item_packing.id = ?
+    """, [mrfPremixPlanDocId, itemPackingId]);
+    return res.isNotEmpty
+        ? MrfPremixPlanDetailWithInfo.fromJson(res.first)
+        : null;
+  }
+}
+
+class MrfPremixPlanDetailWithInfo extends MrfPremixPlanDetail {
+  String skuName, skuCode;
+
+  MrfPremixPlanDetailWithInfo({
+    id,
+    mrfPremixPlanDocId,
+    groupNo,
+    itemPackingId,
+    formulaWeight,
+    this.skuName,
+    this.skuCode,
+  }) : super(
+          id: id,
+          mrfPremixPlanDocId: mrfPremixPlanDocId,
+          groupNo: groupNo,
+          itemPackingId: itemPackingId,
+          formulaWeight: formulaWeight,
+        );
+
+  factory MrfPremixPlanDetailWithInfo.fromJson(Map<String, dynamic> json) =>
+      new MrfPremixPlanDetailWithInfo(
+        id: json["id"],
+        mrfPremixPlanDocId: json["mrf_premix_plan_doc_id"],
+        groupNo: json["group_no"],
+        itemPackingId: json["item_packing_id"],
+        formulaWeight: json["formula_weight"] is int
+            ? (json["formula_weight"] as int).toDouble()
+            : json["formula_weight"],
+        skuCode: json["sku_code"],
+        skuName: json["sku_name"],
+      );
 }

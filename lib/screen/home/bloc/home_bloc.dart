@@ -9,6 +9,10 @@ class HomeBloc extends BlocBase {
   final _mrfPremixPlanDocListSubject =
       BehaviorSubject<List<MrfPremixPlanDoc>>();
 
+  HomeBloc() {
+    _loadMrfPremixPlanDoc();
+  }
+
   _loadMrfPremixPlanDoc() async {
     _mrfPremixPlanDocListSubject.add(await MrfPremixPlanDocDao().getAll());
   }

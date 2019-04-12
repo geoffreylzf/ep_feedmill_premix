@@ -30,7 +30,6 @@ class App extends StatelessWidget {
       ),
       routes: {
         Routes.housekeeping: (context) => HousekeepingScreen(),
-        Routes.premix: (context) => PremixScreen(),
         Routes.login: (context) => LoginScreen(),
         Routes.home: (context) => HomeScreen(),
       },

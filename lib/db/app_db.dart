@@ -29,9 +29,12 @@ class AppDb {
       version: _version,
       onCreate: (Database db, int version) async {
         await db.execute(DbSql.createItemPackingTable);
-        await db.execute(DbSql.createTempPremixDetailTable);
         await db.execute(DbSql.createMrfPremixPlanDocTable);
         await db.execute(DbSql.createMrfPremixPlanDocDetailTable);
+
+        await db.execute(DbSql.createTempPremixDetailTable);
+        await db.execute(DbSql.createPremixTable);
+        await db.execute(DbSql.createPremixDetailTable);
       },
     );
   }

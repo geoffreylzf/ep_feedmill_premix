@@ -27,7 +27,20 @@ class _HomeScreenState extends State<HomeScreen> {
       bloc: homeBloc,
       child: Scaffold(
         appBar: AppBar(title: Text(Strings.appName)),
-        body: Dashboard(),
+        body: Stack(
+          children: <Widget>[
+            Center(
+              child: Opacity(
+                opacity: 0.05,
+                child: Text(
+                  "2",
+                  style: TextStyle(fontSize: 600),
+                ),
+              ),
+            ),
+            Dashboard(),
+          ],
+        ),
         drawer: NavDrawerStart(),
       ),
     );

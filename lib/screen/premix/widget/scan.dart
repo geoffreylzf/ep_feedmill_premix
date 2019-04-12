@@ -67,7 +67,9 @@ class _CodeInputState extends State<CodeInput> {
               controller: _scanController,
               autofocus: true,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(), labelText: Strings.ingredient),
+                border: OutlineInputBorder(),
+                labelText: Strings.barcode,
+              ),
             ),
           ),
         ],
