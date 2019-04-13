@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:ep_feedmill/model/api_response.dart';
 import 'package:ep_feedmill/model/auth.dart';
-import 'package:ep_feedmill/model/item_packing.dart';
-import 'package:ep_feedmill/model/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/model/table/item_packing.dart';
+import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/model/user.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
 import 'package:http/http.dart';

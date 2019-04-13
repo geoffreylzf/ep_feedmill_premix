@@ -1,5 +1,5 @@
 import 'package:ep_feedmill/db/app_db.dart';
-import 'package:ep_feedmill/model/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 
 const _table = "mrf_premix_plan_doc";
 

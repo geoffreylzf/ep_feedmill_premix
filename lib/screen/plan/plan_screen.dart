@@ -2,7 +2,7 @@ import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/plan/bloc/plan_bloc.dart';
-import 'package:ep_feedmill/screen/plan/widget/batch_selection.dart';
+import 'package:ep_feedmill/screen/plan/widget/plan_batch_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

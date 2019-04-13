@@ -1,19 +1,20 @@
-import 'package:ep_feedmill/model/mrf_premix_plan_detail.dart';
+import 'package:ep_feedmill/model/table/mrf_premix_plan_detail.dart';
 
 class MrfPremixPlanDoc {
   int id, itemPackingId, totalBatch;
   String recipeName, docNo, docDate, remarks;
   List<MrfPremixPlanDetail> mrfPremixPlanDetailList;
 
-  MrfPremixPlanDoc(
-      {this.id,
-      this.itemPackingId,
-      this.totalBatch,
-      this.recipeName,
-      this.docNo,
-      this.docDate,
-      this.remarks,
-      this.mrfPremixPlanDetailList});
+  MrfPremixPlanDoc({
+    this.id,
+    this.itemPackingId,
+    this.totalBatch,
+    this.recipeName,
+    this.docNo,
+    this.docDate,
+    this.remarks,
+    this.mrfPremixPlanDetailList,
+  });
 
   factory MrfPremixPlanDoc.fromJson(Map<String, dynamic> json) {
     return MrfPremixPlanDoc(
@@ -43,13 +44,7 @@ class MrfPremixPlanDoc {
             List<dynamic>.from(mrfPremixPlanDetailList.map((x) => x.toJson())),
       };
 
-  Map<String, dynamic> toDbJson() => {
-        "id": id,
-        "recipe_name": recipeName,
-        "doc_no": docNo,
-        "doc_date": docDate,
-        "item_packing_id": itemPackingId,
-        "remarks": remarks,
-        "total_batch": totalBatch,
-      };
+  Map<String, dynamic> toDbJson() {
+    return toJson()..remove("mrf_premix_plan_detail_list");
+  }
 }

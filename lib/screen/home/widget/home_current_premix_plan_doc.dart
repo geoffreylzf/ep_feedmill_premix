@@ -1,6 +1,6 @@
 import 'package:ep_feedmill/animation/slide_right_route.dart';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
-import 'package:ep_feedmill/model/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
 import 'package:ep_feedmill/screen/plan/plan_screen.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';

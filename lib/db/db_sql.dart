@@ -43,6 +43,7 @@ class DbSql {
       `mrf_premix_plan_doc_id` INTEGER,
       `batch_no` INTEGER,
       `group_no` INTEGER,
+      `is_delete` INTEGER DEFAULT 0,
       `is_upload` INTEGER DEFAULT 0,
       `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
       """;

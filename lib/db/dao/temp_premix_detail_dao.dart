@@ -1,5 +1,5 @@
 import 'package:ep_feedmill/db/app_db.dart';
-import 'package:ep_feedmill/model/temp_premix_detail.dart';
+import 'package:ep_feedmill/model/table/temp_premix_detail.dart';
 
 const _table = "temp_premix_detail";
 

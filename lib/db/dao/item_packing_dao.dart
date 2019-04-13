@@ -1,5 +1,5 @@
 import 'package:ep_feedmill/db/app_db.dart';
-import 'package:ep_feedmill/model/item_packing.dart';
+import 'package:ep_feedmill/model/table/item_packing.dart';
 
 const _table = "item_packing";
 

@@ -1,7 +1,7 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
-import 'package:ep_feedmill/model/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/module/api_module.dart';
 import 'package:rxdart/rxdart.dart';
 

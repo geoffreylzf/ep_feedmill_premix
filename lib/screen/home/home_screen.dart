@@ -3,7 +3,7 @@ import 'package:ep_feedmill/res/nav.dart';
 import 'package:ep_feedmill/res/route.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
-import 'package:ep_feedmill/screen/home/widget/current_premix_plan_doc.dart';
+import 'package:ep_feedmill/screen/home/widget/home_current_premix_plan_doc.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
 import 'package:flutter/material.dart';
 

@@ -3,10 +3,10 @@ import 'package:ep_feedmill/bloc/bluetooth_bloc.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
-import 'package:ep_feedmill/screen/premix/widget/plan_detail_list.dart';
+import 'package:ep_feedmill/screen/premix/widget/premix_plan_detail_list.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_temp.dart';
-import 'package:ep_feedmill/screen/premix/widget/scan.dart';
-import 'package:ep_feedmill/screen/premix/widget/weighing.dart';
+import 'package:ep_feedmill/screen/premix/widget/premix_scan.dart';
+import 'package:ep_feedmill/screen/premix/widget/premix_weighing.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
