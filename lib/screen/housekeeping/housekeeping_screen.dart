@@ -29,29 +29,3 @@ _loadItemPacking() async {
     await ItemPackingDao().insert(ip);
   }
 }
-
-_login(BuildContext context) {
-  ApiModule().login("1", "1", "1").then((onValue) {
-    print(onValue.cod);
-    print(onValue.result.success);
-  }).catchError((e) {
-
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(Strings.error),
-            content: Text(e.toString()),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(Strings.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
-  });
-}

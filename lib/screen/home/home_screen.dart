@@ -6,6 +6,7 @@ import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
 import 'package:ep_feedmill/screen/home/widget/home_current_premix_plan_doc.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -31,10 +32,15 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Center(
               child: Opacity(
-                opacity: 0.05,
-                child: Text(
-                  "2",
-                  style: TextStyle(fontSize: 600),
+                opacity: 0.10,
+                child: StoreConnector<int, String>(
+                  converter: (store) => store.state.toString(),
+                  builder: (ctx, count) {
+                    return Text(
+                      count,
+                      style: TextStyle(fontSize: 600),
+                    );
+                  },
                 ),
               ),
             ),

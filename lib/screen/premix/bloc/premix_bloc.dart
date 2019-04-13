@@ -3,6 +3,7 @@ import 'package:ep_feedmill/db/dao/item_packing_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/db/dao/temp_premix_detail_dao.dart';
+import 'package:ep_feedmill/model/table/premix.dart';
 import 'package:ep_feedmill/model/table/temp_premix_detail.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vibrate/vibrate.dart';
@@ -191,10 +192,16 @@ class PremixBloc extends BlocBase {
     return true;
   }
 
-  deleteTempPremixDetail(int itemPackingId) async {
-    await TempPremixDetailDao().deleteById(itemPackingId);
+  deleteTempPremixDetail(int id) async {
+    await TempPremixDetailDao().deleteById(id);
     await _loadTempPremixDetailList();
     await _loadPlanDetailWithInfoList();
+  }
+
+  Future<bool> savePremix() async {
+    final premix = Premix(
+
+    );
   }
 }
 

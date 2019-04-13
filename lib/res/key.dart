@@ -7,4 +7,6 @@ class Keys {
 
   static const bluetoothWeighingName = "bluetoothWeighingName";
   static const bluetoothWeighingAddress = "bluetoothWeighingAddress";
+
+  static const groupNo = "groupNo";
 }

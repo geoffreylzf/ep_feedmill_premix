@@ -79,7 +79,9 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
                       Navigator.push(
                         context,
                         SlideRightRoute(
-                          widget: PlanScreen(doc.id),
+                          widget: PlanScreen(
+                            mrfPremixPlanDocId: doc.id,
+                          ),
                         ),
                       );
                     },

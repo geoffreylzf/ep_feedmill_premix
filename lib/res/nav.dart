@@ -34,6 +34,7 @@ class NavDrawerStart extends StatelessWidget {
             leading: Icon(Icons.view_quilt),
             title: Text(Strings.houseKeeping),
             onTap: () {
+              Navigator.pop(context);
               Navigator.pushNamed(context, Routes.housekeeping);
             },
           ),
@@ -42,6 +43,15 @@ class NavDrawerStart extends StatelessWidget {
             title: Text(Strings.upload),
             onTap: () {
               Navigator.pop(context);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text(Strings.setting),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, Routes.setting);
             },
           ),
           Divider(),

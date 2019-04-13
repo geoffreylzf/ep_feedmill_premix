@@ -11,7 +11,7 @@ class PrintPreviewScreen extends StatefulWidget {
   final String qrText;
   final String printText;
 
-  PrintPreviewScreen(this.qrText, this.printText);
+  PrintPreviewScreen({this.qrText, this.printText});
 
   @override
   _PrintPreviewScreenState createState() => _PrintPreviewScreenState();

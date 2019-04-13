@@ -4,6 +4,7 @@ import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_plan_detail_list.dart';
+import 'package:ep_feedmill/screen/premix/widget/premix_save.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_temp.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_scan.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_weighing.dart';
@@ -37,7 +38,7 @@ class _PremixScreenState extends State<PremixScreen>
       mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
       batchNo: widget.batchNo,
     );
-    _tabController = TabController(vsync: this, length: 2);
+    _tabController = TabController(vsync: this, length: 3);
   }
 
   @override
@@ -115,6 +116,7 @@ class _PremixScreenState extends State<PremixScreen>
               tabs: [
                 Tab(icon: Icon(Icons.view_list)),
                 Tab(icon: Icon(FontAwesomeIcons.weight)),
+                Tab(icon: Icon(Icons.save)),
               ],
             ),
           ),
@@ -123,6 +125,7 @@ class _PremixScreenState extends State<PremixScreen>
             children: <Widget>[
               PlanDetailListTab(),
               WeighingTab(),
+              SaveTab(),
             ],
           ),
         ),
@@ -176,6 +179,19 @@ class _WeighingTabState extends State<WeighingTab> {
     );
   }
 }
+
+class SaveTab extends StatefulWidget {
+  @override
+  _SaveTabState createState() => _SaveTabState();
+}
+
+class _SaveTabState extends State<SaveTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Save();
+  }
+}
+
 
 Future<bool> _onBackPressed(BuildContext context) {
   return showDialog(

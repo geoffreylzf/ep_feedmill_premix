@@ -77,4 +77,14 @@ class SharedPreferencesModule {
 
     return BluetoothDevice(name, address);
   }
+
+  saveGroupNo(int i) async {
+    final prefs = await sp;
+    await prefs.setInt(Keys.groupNo, i);
+  }
+
+  Future<int> getGroupNo() async {
+    final prefs = await sp;
+    return prefs.getInt(Keys.groupNo);
+  }
 }

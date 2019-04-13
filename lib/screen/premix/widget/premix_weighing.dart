@@ -185,9 +185,9 @@ class _WeighingState extends State<Weighing> {
                       }
                     });
                   },
-                  icon: Icon(Icons.save),
+                  icon: Icon(Icons.add),
                   label: Text(
-                    Strings.save.toUpperCase(),
+                    Strings.add.toUpperCase(),
                   ),
                 ),
               ),

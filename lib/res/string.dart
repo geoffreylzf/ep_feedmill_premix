@@ -18,6 +18,9 @@ class Strings {
   static const cancel = "Cancel";
   static const barcode = "Barcode";
   static const login = "Login";
+  static const complete = "Complete";
+  static const add = "Add";
+  static const setting = "Setting";
   static const skuCode = "Sku Code";
   static const signOut = "Sign Out";
   static const printPreview = "Print Preview";

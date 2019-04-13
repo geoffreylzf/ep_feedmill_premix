@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 class PlanScreen extends StatefulWidget {
   final int mrfPremixPlanDocId;
 
-  PlanScreen(this.mrfPremixPlanDocId);
+  PlanScreen({this.mrfPremixPlanDocId});
 
   @override
   _PlanScreenState createState() => _PlanScreenState();
