@@ -3,6 +3,7 @@ class Strings {
   static const houseKeeping = "Housekeeping";
   static const upload = "Upload";
   static const premixPlanBatch = "Premix Plan Batch";
+  static const premixHistory = "Premix History";
   static const logout = "Logout";
   static const document = "Document";
   static const premix = "Premix";
@@ -17,9 +18,11 @@ class Strings {
   static const back = "Back";
   static const cancel = "Cancel";
   static const barcode = "Barcode";
+  static const history = "History";
   static const login = "Login";
   static const complete = "Complete";
   static const add = "Add";
+  static const batch = "Batch";
   static const setting = "Setting";
   static const skuCode = "Sku Code";
   static const signOut = "Sign Out";

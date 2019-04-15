@@ -5,9 +5,10 @@ import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_plan_detail_list.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_save.dart';
-import 'package:ep_feedmill/screen/premix/widget/premix_temp.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_scan.dart';
+import 'package:ep_feedmill/screen/premix/widget/premix_temp.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_weighing.dart';
+import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -60,17 +61,10 @@ class _PremixScreenState extends State<PremixScreen>
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(Strings.error),
-            content: Text(message),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(Strings.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
+          return SimpleAlertDialog(
+            title: Strings.error,
+            message: message,
+            btnText: Strings.close.toUpperCase(),
           );
         });
   }
@@ -103,8 +97,7 @@ class _PremixScreenState extends State<PremixScreen>
                           label: Text(
                             "Batch ${premixBloc.batchNo}",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12),
+                                fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                         ),
                       )
@@ -191,7 +184,6 @@ class _SaveTabState extends State<SaveTab> {
     return Save();
   }
 }
-
 
 Future<bool> _onBackPressed(BuildContext context) {
   return showDialog(

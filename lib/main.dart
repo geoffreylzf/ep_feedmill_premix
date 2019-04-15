@@ -8,13 +8,12 @@ import 'package:ep_feedmill/res/theme.dart';
 import 'package:ep_feedmill/screen/home/home_screen.dart';
 import 'package:ep_feedmill/screen/housekeeping/housekeeping_screen.dart';
 import 'package:ep_feedmill/screen/login/login_screen.dart';
-import 'package:ep_feedmill/screen/plan/plan_screen.dart';
+import 'package:ep_feedmill/screen/premix_history/premix_history_screen.dart';
 import 'package:ep_feedmill/screen/setting/setting_screen.dart';
 import 'package:ep_feedmill/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:redux_thunk/redux_thunk.dart';
 
 void main() => runApp(App());
 
@@ -22,7 +21,6 @@ class App extends StatelessWidget {
   final store = Store<int>(
     groupNoReducer,
     initialState: 0,
-    middleware: [thunkMiddleware],
   );
 
   @override
@@ -50,8 +48,8 @@ class App extends StatelessWidget {
           Routes.login: (context) => LoginScreen(),
           Routes.home: (context) => HomeScreen(),
           Routes.housekeeping: (context) => HousekeepingScreen(),
-          Routes.plan: (context) => PlanScreen(),
           Routes.setting: (context) => SettingScreen(),
+          Routes.premixHistory: (context) => PremixHistoryScreen(),
         },
       ),
     );

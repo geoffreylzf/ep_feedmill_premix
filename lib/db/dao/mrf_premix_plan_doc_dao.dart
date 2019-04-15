@@ -12,11 +12,12 @@ class MrfPremixPlanDocDao {
 
   Future<int> insert(MrfPremixPlanDoc mrfPremixPlanDoc) async {
     var db = await AppDb().database;
-    var res = await db.insert(_table, mrfPremixPlanDoc.toDbJson());
+    var res = await db.insert(_table, mrfPremixPlanDoc.toDbInsertJson());
     return res;
   }
 
-  Future<MrfPremixPlanDocWithInfo> getByIdWithInfo(int id) async {
+  Future<MrfPremixPlanDocWithInfo> getByIdWithInfo(
+      {int mrfPremixPlanDocId}) async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT
@@ -27,7 +28,7 @@ class MrfPremixPlanDocDao {
     LEFT JOIN item_packing 
       ON mrf_premix_plan_doc.item_packing_id = item_packing.id
     WHERE mrf_premix_plan_doc.id = ?
-    """, [id]);
+    """, [mrfPremixPlanDocId]);
     return res.isNotEmpty ? MrfPremixPlanDocWithInfo.fromJson(res.first) : null;
   }
 
@@ -50,6 +51,7 @@ class MrfPremixPlanDocWithInfo extends MrfPremixPlanDoc {
 
   MrfPremixPlanDocWithInfo({
     id,
+    formulaCategoryId,
     itemPackingId,
     totalBatch,
     recipeName,
@@ -60,6 +62,7 @@ class MrfPremixPlanDocWithInfo extends MrfPremixPlanDoc {
     this.skuName,
   }) : super(
           id: id,
+          formulaCategoryId: formulaCategoryId,
           itemPackingId: itemPackingId,
           totalBatch: totalBatch,
           recipeName: recipeName,
@@ -72,6 +75,7 @@ class MrfPremixPlanDocWithInfo extends MrfPremixPlanDoc {
       new MrfPremixPlanDocWithInfo(
         id: json["id"],
         recipeName: json["recipe_name"],
+        formulaCategoryId: json["formula_category_id"],
         docNo: json["doc_no"],
         docDate: json["doc_date"],
         itemPackingId: json["item_packing_id"],

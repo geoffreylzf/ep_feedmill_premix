@@ -21,7 +21,7 @@ class _SettingScreenState extends State<SettingScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
-            GroupCard(),
+            CardGroup(),
           ],
         ),
       ),
@@ -29,12 +29,12 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 }
 
-class GroupCard extends StatefulWidget {
+class CardGroup extends StatefulWidget {
   @override
-  _GroupCardState createState() => _GroupCardState();
+  _CardGroupState createState() => _CardGroupState();
 }
 
-class _GroupCardState extends State<GroupCard> {
+class _CardGroupState extends State<CardGroup> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -52,34 +52,7 @@ class _GroupCardState extends State<GroupCard> {
                 children: List.generate(
                   8,
                   (index) {
-                    return Card(
-                      color: Theme.of(context).primaryColorDark,
-                      child: StoreConnector<int, Function(int)>(
-                        converter: (store) {
-                          return (groupNo) {
-                            store.dispatch(SelectGroupNo(groupNo));
-                          };
-                        },
-                        builder: (ctx, callback) {
-                          return InkWell(
-                            splashColor: Theme.of(context).primaryColorLight,
-                            onTap: () {
-                              callback(index + 1);
-                              SharedPreferencesModule().saveGroupNo(index + 1);
-                            },
-                            child: Center(
-                              child: Text(
-                                '${index + 1}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .display3
-                                    .apply(color: Colors.white),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                    return GroupNoCard(index + 1);
                   },
                 ),
               ),
@@ -87,6 +60,56 @@ class _GroupCardState extends State<GroupCard> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class GroupNoCard extends StatefulWidget {
+  final int index;
+
+  GroupNoCard(this.index);
+
+  @override
+  _GroupNoCardState createState() => _GroupNoCardState();
+}
+
+class _GroupNoCardState extends State<GroupNoCard> {
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<int, int>(
+      converter: (store) => store.state,
+      builder: (ctx, groupNo) {
+        return Card(
+          color: widget.index != groupNo
+              ? Theme.of(context).primaryColorDark
+              : Theme.of(context).primaryColorLight,
+          child: StoreConnector<int, Function(int)>(
+            converter: (store) {
+              return (groupNo) {
+                store.dispatch(SelectGroupNo(groupNo));
+              };
+            },
+            builder: (ctx, callback) {
+              return InkWell(
+                splashColor: Theme.of(context).accentColor,
+                onTap: () {
+                  callback(widget.index);
+                  SharedPreferencesModule().saveGroupNo(widget.index);
+                },
+                child: Center(
+                  child: Text(
+                    '${widget.index}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .display3
+                        .apply(color: widget.index != groupNo ? Colors.white : Colors.black),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

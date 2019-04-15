@@ -2,9 +2,13 @@ import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/item_packing_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
+import 'package:ep_feedmill/db/dao/premix_dao.dart';
+import 'package:ep_feedmill/db/dao/premix_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/temp_premix_detail_dao.dart';
 import 'package:ep_feedmill/model/table/premix.dart';
+import 'package:ep_feedmill/model/table/premix_detail.dart';
 import 'package:ep_feedmill/model/table/temp_premix_detail.dart';
+import 'package:ep_feedmill/module/shared_preferences_module.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -56,27 +60,43 @@ class PremixBloc extends BlocBase {
   PremixDelegate _delegate;
   int _mrfPremixPlanDocId;
   int _batchNo;
+  int _groupNo;
 
   PremixBloc({PremixDelegate delegate, int mrfPremixPlanDocId, int batchNo}) {
     _delegate = delegate;
     _mrfPremixPlanDocId = mrfPremixPlanDocId;
     _batchNo = batchNo;
-    _loadPlanDoc();
-    _loadPlanDetailWithInfoList();
-    _loadTempPremixDetailList();
+
+    _init();
+  }
+
+  _init() async {
+    await _clearTemp();
+    _groupNo = await SharedPreferencesModule().getGroupNo();
+    await _loadPlanDoc();
+    await _loadPlanDetailWithInfoList();
+    await _loadTempPremixDetailList();
+  }
+
+  _clearTemp() async {
+    await TempPremixDetailDao().deleteAll();
   }
 
   int get batchNo => _batchNo;
 
   _loadPlanDoc() async {
-    final doc =
-        await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
+    final doc = await MrfPremixPlanDocDao().getByIdWithInfo(
+      mrfPremixPlanDocId: _mrfPremixPlanDocId,
+    );
     _planDocSubject.add(doc);
   }
 
   _loadPlanDetailWithInfoList() async {
     final list = await MrfPremixPlanDetailDao()
-        .getByMrfPremixPlanDocIdWithInfoNotInTemp(_mrfPremixPlanDocId);
+        .getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
+      mrfPremixPlanDocId: _mrfPremixPlanDocId,
+      groupNo: _groupNo,
+    );
     _planDetailWithInfoListSubject.add(list);
   }
 
@@ -128,8 +148,10 @@ class PremixBloc extends BlocBase {
     var formulaWeight = 0.0;
 
     final planDetail = await MrfPremixPlanDetailDao()
-        .getByMrfPremixPlanDocIdItemPackingId(
-            _mrfPremixPlanDocId, itemPackingId);
+        .getByMrfPremixPlanDocIdGroupNoItemPackingId(
+            mrfPremixPlanDocId: _mrfPremixPlanDocId,
+            groupNo: _groupNo,
+            itemPackingId: itemPackingId);
 
     if (planDetail == null) {
       _selectedItemPackingSubject.add(SelectedItemPacking.error(
@@ -199,9 +221,27 @@ class PremixBloc extends BlocBase {
   }
 
   Future<bool> savePremix() async {
-    final premix = Premix(
+    final plan = _planDocSubject.value;
 
+    final premix = Premix.dbInsert(
+      mrfPremixPlanDocId: _mrfPremixPlanDocId,
+      batchNo: _batchNo,
+      groupNo: _groupNo,
+      recipeName: plan.recipeName,
+      docNo: plan.docNo,
+      formulaCategoryId: plan.formulaCategoryId,
+      itemPackingId: plan.itemPackingId,
     );
+
+    final premixId = await PremixDao().insert(premix);
+    final tempList = await TempPremixDetailDao().getAll();
+    final detailList = PremixDetail.fromTempWithPremixId(premixId, tempList);
+
+    await Future.forEach(detailList, (detail) async {
+      await PremixDetailDao().insert(detail);
+    });
+
+    return true;
   }
 }
 

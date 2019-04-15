@@ -9,6 +9,14 @@ class HomeBloc extends BlocBase {
   final _mrfPremixPlanDocListSubject =
       BehaviorSubject<List<MrfPremixPlanDoc>>();
 
+  Stream<List<MrfPremixPlanDoc>> get mrfPremixPlanDocListStream =>
+      _mrfPremixPlanDocListSubject.stream;
+
+  @override
+  void dispose() {
+    _mrfPremixPlanDocListSubject.close();
+  }
+
   HomeBloc() {
     _loadMrfPremixPlanDoc();
   }
@@ -29,13 +37,5 @@ class HomeBloc extends BlocBase {
       });
     });
     await _loadMrfPremixPlanDoc();
-  }
-
-  Stream<List<MrfPremixPlanDoc>> get mrfPremixPlanDocListStream =>
-      _mrfPremixPlanDocListSubject.stream;
-
-  @override
-  void dispose() {
-    _mrfPremixPlanDocListSubject.close();
   }
 }

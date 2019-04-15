@@ -5,8 +5,8 @@ import 'package:ep_feedmill/module/bluetooth_module.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
 import 'package:rxdart/subjects.dart';
 
-const _grossWeight = "G.W.:";
-const _tareWeight = "T.W.:";
+/*const _grossWeight = "G.W.:";
+const _tareWeight = "T.W.:";*/
 const _netWeight = "N.W.:";
 const _kg = "kg";
 

@@ -88,25 +88,22 @@ class PremixCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            CardLabelSmall("Delivery Order"),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.assignment,
-                    size: 40,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(Strings.document),
-                  ),
-                ],
-              ),
+            CardLabelSmall(Strings.premix),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.history,
+                  size: 40,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(Strings.history),
+                ),
+              ],
             ),
             RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, Routes.premix);
+                Navigator.pushNamed(context, Routes.premixHistory);
               },
               child: Text(Strings.premix.toUpperCase()),
             )

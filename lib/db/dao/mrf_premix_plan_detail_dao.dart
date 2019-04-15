@@ -1,5 +1,6 @@
 import 'package:ep_feedmill/db/app_db.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_detail.dart';
+import 'package:flutter/foundation.dart';
 
 const _table = "mrf_premix_plan_detail";
 
@@ -30,7 +31,8 @@ class MrfPremixPlanDetailDao {
   }
 
   Future<List<MrfPremixPlanDetailWithInfo>>
-      getByMrfPremixPlanDocIdWithInfoNotInTemp(int mrfPremixPlanDocId) async {
+      getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
+          {@required int mrfPremixPlanDocId, @required int groupNo}) async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT 
@@ -41,15 +43,19 @@ class MrfPremixPlanDetailDao {
     LEFT JOIN item_packing 
       ON mrf_premix_plan_detail.item_packing_id = item_packing.id
     WHERE mrf_premix_plan_doc_id = ?
+    AND group_no = ?
     AND item_packing.id NOT in (SELECT item_packing_id FROM temp_premix_detail)
-    """, [mrfPremixPlanDocId]);
+    """, [mrfPremixPlanDocId, groupNo]);
     return res.isNotEmpty
         ? res.map((c) => MrfPremixPlanDetailWithInfo.fromJson(c)).toList()
         : [];
   }
 
-  Future<MrfPremixPlanDetailWithInfo> getByMrfPremixPlanDocIdItemPackingId(
-      int mrfPremixPlanDocId, int itemPackingId) async {
+  Future<MrfPremixPlanDetailWithInfo>
+      getByMrfPremixPlanDocIdGroupNoItemPackingId(
+          {@required int mrfPremixPlanDocId,
+          @required int groupNo,
+          @required int itemPackingId}) async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT 
@@ -60,8 +66,9 @@ class MrfPremixPlanDetailDao {
     LEFT JOIN item_packing 
       ON mrf_premix_plan_detail.item_packing_id = item_packing.id
     WHERE mrf_premix_plan_doc_id = ?
+    AND group_no = ? 
     AND item_packing.id = ?
-    """, [mrfPremixPlanDocId, itemPackingId]);
+    """, [mrfPremixPlanDocId, groupNo, itemPackingId]);
     return res.isNotEmpty
         ? MrfPremixPlanDetailWithInfo.fromJson(res.first)
         : null;

@@ -1,4 +1,6 @@
 import 'package:ep_feedmill/model/table/premix_detail.dart';
+import 'package:ep_feedmill/util/date_time_util.dart';
+import 'package:flutter/widgets.dart';
 
 /*const colId = "id";
 const colMrfPremixPlanDocId = "mrf_premix_plan_doc_id";
@@ -10,9 +12,12 @@ const colTimeStamp = "timestamp";
 const oPremixDetailList = "premix_detail_list";*/
 
 class Premix {
-  int id, mrfPremixPlanDocId, batchNo, groupNo, isUpload, isDelete;
+  int id, mrfPremixPlanDocId, batchNo, groupNo, isUpload = 0, isDelete = 0;
   String timestamp;
-  List<PremixDetail> premixDetailList;
+  List<PremixDetail> premixDetailList = [];
+
+  String recipeName, docNo;
+  int formulaCategoryId, itemPackingId;
 
   Premix({
     this.id,
@@ -23,6 +28,20 @@ class Premix {
     this.isDelete,
     this.timestamp,
     this.premixDetailList,
+    this.recipeName,
+    this.docNo,
+    this.formulaCategoryId,
+    this.itemPackingId,
+  });
+
+  Premix.dbInsert({
+    @required this.mrfPremixPlanDocId,
+    @required this.batchNo,
+    @required this.groupNo,
+    @required this.recipeName,
+    @required this.docNo,
+    @required this.formulaCategoryId,
+    @required this.itemPackingId,
   });
 
   factory Premix.fromJson(Map<String, dynamic> json) {
@@ -38,6 +57,10 @@ class Premix {
           ? List<PremixDetail>.from(
               json["premix_detail_list"].map((dt) => PremixDetail.fromJson(dt)))
           : [],
+      recipeName: json["recipe_name"],
+      docNo: json["doc_no"],
+      formulaCategoryId: json["formula_category_id"],
+      itemPackingId: json["item_packing_id"],
     );
   }
 
@@ -51,5 +74,14 @@ class Premix {
         "timestamp": timestamp,
         "premix_detail_list":
             List<dynamic>.from(premixDetailList.map((x) => x.toJson())),
+        "recipe_name": recipeName,
+        "doc_no": docNo,
+        "formula_category_id": formulaCategoryId,
+        "item_packing_id": itemPackingId,
       };
+
+  Map<String, dynamic> toInsertDbJson() {
+    timestamp = DateTimeUtil().getCurrentTimestamp();
+    return toJson()..remove("premix_detail_list");
+  }
 }

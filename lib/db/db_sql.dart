@@ -10,6 +10,7 @@ class DbSql {
       CREATE TABLE `mrf_premix_plan_doc` (
       `id` INTEGER PRIMARY KEY,
       `recipe_name` TEXT,
+      `formula_category_id` INTEGER,
       `doc_no` TEXT, 
       `doc_date` TEXT,  
       `item_packing_id` INTEGER,
@@ -43,9 +44,13 @@ class DbSql {
       `mrf_premix_plan_doc_id` INTEGER,
       `batch_no` INTEGER,
       `group_no` INTEGER,
+      `recipe_name` TEXT,
+      `doc_no` TEXT, 
+      `formula_category_id` INTEGER,
+      `item_packing_id` INTEGER,
       `is_delete` INTEGER DEFAULT 0,
       `is_upload` INTEGER DEFAULT 0,
-      `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+      `timestamp` TIMESTAMP);
       """;
 
   static final createPremixDetailTable = """
