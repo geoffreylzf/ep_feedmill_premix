@@ -1,5 +1,4 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
-import 'package:ep_feedmill/db/dao/item_packing_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/db/dao/premix_dao.dart';
@@ -9,6 +8,11 @@ import 'package:ep_feedmill/model/table/premix.dart';
 import 'package:ep_feedmill/model/table/premix_detail.dart';
 import 'package:ep_feedmill/model/table/temp_premix_detail.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_temp_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
+import 'package:ep_feedmill/screen/premix/premix_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -16,78 +20,59 @@ class PremixBloc extends BlocBase {
   final _planDocSubject = BehaviorSubject<MrfPremixPlanDocWithInfo>();
   final _planDetailWithInfoListSubject =
       BehaviorSubject<List<MrfPremixPlanDetailWithInfo>>();
-  final _tempPremixDetailListSubject =
-      BehaviorSubject<List<TempPremixDetailWithInfo>>();
-
-  final _totalWeightSubject = BehaviorSubject<double>();
-
-  final _selectedItemPackingSubject = BehaviorSubject<SelectedItemPacking>();
-  final _isItemPackingSelectedSubject = BehaviorSubject<bool>.seeded(false);
-
-  final _isWeighingByBtSubject = BehaviorSubject<bool>.seeded(false);
 
   Stream<MrfPremixPlanDocWithInfo> get planDocStream => _planDocSubject.stream;
 
   Stream<List<MrfPremixPlanDetailWithInfo>> get planDetailWithInfoListStream =>
       _planDetailWithInfoListSubject.stream;
 
-  Stream<List<TempPremixDetailWithInfo>> get tempPremixDetailListStream =>
-      _tempPremixDetailListSubject.stream;
-
-  Stream<double> get totalWeightStream => _totalWeightSubject.stream;
-
-  Stream<bool> get isWeighingByBtStream => _isWeighingByBtSubject.stream;
-
-  Stream<bool> get isItemPackingSelectedStream =>
-      _isItemPackingSelectedSubject.stream;
-
-  Stream<SelectedItemPacking> get selectedItemPackingStream =>
-      _selectedItemPackingSubject.stream;
-
   @override
   dispose() {
     _planDocSubject.close();
     _planDetailWithInfoListSubject.close();
-    _tempPremixDetailListSubject.close();
-    _totalWeightSubject.close();
-
-    _isItemPackingSelectedSubject.close();
-    _selectedItemPackingSubject.close();
-
-    _isWeighingByBtSubject.close();
   }
 
   PremixDelegate _delegate;
+  PremixScanBloc _scanBloc;
+  PremixWeighingBloc _weighingBloc;
+  PremixTempBloc _tempBloc;
   int _mrfPremixPlanDocId;
   int _batchNo;
   int _groupNo;
 
-  PremixBloc({PremixDelegate delegate, int mrfPremixPlanDocId, int batchNo}) {
+  PremixBloc({
+    @required PremixDelegate delegate,
+    @required PremixScanBloc scanBloc,
+    @required PremixWeighingBloc weighingBloc,
+    @required PremixTempBloc tempBloc,
+    @required int mrfPremixPlanDocId,
+    @required int batchNo,
+  }) {
     _delegate = delegate;
+    _scanBloc = scanBloc;
+    _weighingBloc = weighingBloc;
+    _tempBloc = tempBloc;
     _mrfPremixPlanDocId = mrfPremixPlanDocId;
     _batchNo = batchNo;
 
     _init();
   }
 
+  int get batchNo => _batchNo;
+
   _init() async {
-    await _clearTemp();
     _groupNo = await SharedPreferencesModule().getGroupNo();
     await _loadPlanDoc();
     await _loadPlanDetailWithInfoList();
-    await _loadTempPremixDetailList();
   }
 
   _clearTemp() async {
     await TempPremixDetailDao().deleteAll();
   }
 
-  int get batchNo => _batchNo;
-
   _loadPlanDoc() async {
-    final doc = await MrfPremixPlanDocDao().getByIdWithInfo(
-      mrfPremixPlanDocId: _mrfPremixPlanDocId,
-    );
+    final doc =
+        await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
     _planDocSubject.add(doc);
   }
 
@@ -100,82 +85,12 @@ class PremixBloc extends BlocBase {
     _planDetailWithInfoListSubject.add(list);
   }
 
-  _loadTempPremixDetailList() async {
-    final list = await TempPremixDetailDao().getAll();
-    var totalWeight = 0.0;
-    if (list.isNotEmpty) {
-      totalWeight = list.map((c) => c.netWeight).reduce((a, b) => a + b);
-    }
-    _tempPremixDetailListSubject.add(list);
-    _totalWeightSubject.add(totalWeight);
-  }
-
-  setIsWeighingByBt(bool b) {
-    _isWeighingByBtSubject.add(b);
-  }
-
-  clearSelectedItemPacking() {
-    _selectedItemPackingSubject.add(null);
-    _isItemPackingSelectedSubject.add(false);
-  }
-
-  manualSelectItemPacking(int itemPackingId) {
-    scan(itemPackingId);
-    _delegate.onTabChange(1);
-  }
-
-  scan(int itemPackingId) async {
-    if (itemPackingId == null) {
-      _selectedItemPackingSubject.add(SelectedItemPacking.error(
-          errorMessage: "Invalid ingredient barcode"));
-      return;
-    }
-
-    final itemPacking = await ItemPackingDao().getById(itemPackingId);
-    if (itemPacking == null) {
-      _selectedItemPackingSubject.add(SelectedItemPacking.error(
-          errorMessage: "Ingredient barcode not exist"));
-      return;
-    }
-
-    final temp = await TempPremixDetailDao().getByItemPackingId(itemPackingId);
-    if (temp != null) {
-      _selectedItemPackingSubject.add(SelectedItemPacking.error(
-          errorMessage: "Selected ingredient already weighted"));
-      return;
-    }
-
-    var formulaWeight = 0.0;
-
-    final planDetail = await MrfPremixPlanDetailDao()
-        .getByMrfPremixPlanDocIdGroupNoItemPackingId(
-            mrfPremixPlanDocId: _mrfPremixPlanDocId,
-            groupNo: _groupNo,
-            itemPackingId: itemPackingId);
-
-    if (planDetail == null) {
-      _selectedItemPackingSubject.add(SelectedItemPacking.error(
-          errorMessage: "Selected ingredient is not in plan formula"));
-      return;
-    } else {
-      formulaWeight = planDetail.formulaWeight;
-    }
-
-    _selectedItemPackingSubject.add(SelectedItemPacking(
-        id: itemPacking.id,
-        mrfPremixPlanDetailId: planDetail.id,
-        skuName: itemPacking.skuName,
-        skuCode: itemPacking.skuCode,
-        weight: formulaWeight));
-    _isItemPackingSelectedSubject.add(true);
-  }
-
   Future<bool> insertTempPremixDetail(double weight) async {
     if (weight == null || weight == 0) {
       _delegate.onPremixError("Please enter weight");
       return false;
     }
-    var itemPacking = _selectedItemPackingSubject.value;
+    var itemPacking = _scanBloc.getSelectedItemPacking();
     if (itemPacking == null) {
       _delegate.onPremixError("Please enter ingredient");
       return false;
@@ -203,25 +118,26 @@ class PremixBloc extends BlocBase {
       grossWeight: grossWeight,
       tareWeight: tareWeight,
       netWeight: netWeight,
-      isBt: _isWeighingByBtSubject.value ? 1 : 0,
+      isBt: _weighingBloc.getIsWeighingByBt() ? 1 : 0,
     );
 
     await TempPremixDetailDao().insert(tempPremixDetail);
-    await _loadTempPremixDetailList();
+    await _tempBloc.loadTempPremixDetailList();
     await _loadPlanDetailWithInfoList();
-    clearSelectedItemPacking();
+    _scanBloc.clearSelectedItemPacking();
     Vibrate.vibrate();
     return true;
   }
 
   deleteTempPremixDetail(int id) async {
     await TempPremixDetailDao().deleteById(id);
-    await _loadTempPremixDetailList();
+    await _tempBloc.loadTempPremixDetailList();
     await _loadPlanDetailWithInfoList();
   }
 
-  Future<bool> savePremix() async {
-    final plan = _planDocSubject.value;
+  Future<int> savePremix() async {
+    final plan =
+        await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
 
     final premix = Premix.dbInsert(
       mrfPremixPlanDocId: _mrfPremixPlanDocId,
@@ -241,29 +157,8 @@ class PremixBloc extends BlocBase {
       await PremixDetailDao().insert(detail);
     });
 
-    return true;
+    await _clearTemp();
+
+    return premixId;
   }
-}
-
-abstract class PremixDelegate {
-  void onTabChange(int i);
-
-  void onPremixError(String message);
-}
-
-class SelectedItemPacking {
-  int id, mrfPremixPlanDetailId;
-  String skuName, skuCode;
-  double weight;
-  bool isError = false;
-  String errorMessage;
-
-  SelectedItemPacking(
-      {this.id,
-      this.mrfPremixPlanDetailId,
-      this.skuName,
-      this.skuCode,
-      this.weight});
-
-  SelectedItemPacking.error({this.errorMessage}) : this.isError = true;
 }

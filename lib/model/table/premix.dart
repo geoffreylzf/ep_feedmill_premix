@@ -73,14 +73,16 @@ class Premix {
         "is_delete": isDelete,
         "timestamp": timestamp,
         "premix_detail_list":
-            List<dynamic>.from(premixDetailList.map((x) => x.toJson())),
+            premixDetailList != null && premixDetailList.length > 0
+                ? List<dynamic>.from(premixDetailList.map((x) => x.toJson()))
+                : [],
         "recipe_name": recipeName,
         "doc_no": docNo,
         "formula_category_id": formulaCategoryId,
         "item_packing_id": itemPackingId,
       };
 
-  Map<String, dynamic> toInsertDbJson() {
+  Map<String, dynamic> toDbJson() {
     timestamp = DateTimeUtil().getCurrentTimestamp();
     return toJson()..remove("premix_detail_list");
   }

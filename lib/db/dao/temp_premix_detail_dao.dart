@@ -42,7 +42,7 @@ class TempPremixDetailDao {
       temp_premix_detail.*,
       item_packing.sku_code,
       item_packing.sku_name
-      FROM temp_premix_detail
+    FROM temp_premix_detail
     LEFT JOIN item_packing 
       ON temp_premix_detail.item_packing_id = item_packing.id
     ORDER BY temp_premix_detail.id DESC

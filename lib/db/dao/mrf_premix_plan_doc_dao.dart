@@ -17,7 +17,7 @@ class MrfPremixPlanDocDao {
   }
 
   Future<MrfPremixPlanDocWithInfo> getByIdWithInfo(
-      {int mrfPremixPlanDocId}) async {
+      int mrfPremixPlanDocId) async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT

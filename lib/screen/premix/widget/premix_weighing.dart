@@ -3,6 +3,7 @@ import 'package:ep_feedmill/bloc/bluetooth_bloc.dart';
 import 'package:ep_feedmill/module/bluetooth_module.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
 import 'package:flutter/material.dart';
 
 class Weighing extends StatefulWidget {
@@ -28,120 +29,40 @@ class _WeighingState extends State<Weighing> {
   @override
   Widget build(BuildContext context) {
     final bluetoothBloc = BlocProvider.of<BluetoothBloc>(context);
+    final weighingBloc = BlocProvider.of<PremixWeighingBloc>(context);
     final premixBloc = BlocProvider.of<PremixBloc>(context);
 
-    return Column(
+    return ListView(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              StreamBuilder<bool>(
-                  stream: bluetoothBloc.isBluetoothEnabledStream,
-                  initialData: false,
-                  builder: (context, snapshot) {
-                    return IconButton(
-                      icon: Icon(Icons.bluetooth),
-                      iconSize: 48,
-                      onPressed: snapshot.data
-                          ? () => showBluetoothDevices(context, bluetoothBloc)
-                          : null,
-                      color: Theme.of(context).primaryColor,
-                      splashColor: Theme.of(context).accentColor,
-                    );
-                  }),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    StreamBuilder<String>(
-                        stream: bluetoothBloc.statusStream,
-                        builder: (context, snapshot) {
-                          return Text(
-                            "Status : " + snapshot.data.toString(),
-                            style: TextStyle(fontSize: 12),
-                          );
-                        }),
-                    StreamBuilder<String>(
-                        stream: bluetoothBloc.nameStream,
-                        builder: (context, snapshot) {
-                          return Text(
-                              "Name : " +
-                                  ((snapshot.data != null)
-                                      ? snapshot.data
-                                      : ""),
-                              style: TextStyle(fontSize: 12));
-                        }),
-                    StreamBuilder<String>(
-                        stream: bluetoothBloc.addressStream,
-                        builder: (context, snapshot) {
-                          return Text(
-                              "Address : " +
-                                  ((snapshot.data != null)
-                                      ? snapshot.data
-                                      : ""),
-                              style: TextStyle(fontSize: 12));
-                        }),
-                  ],
-                ),
-              ),
-              StreamBuilder<bool>(
-                  stream: bluetoothBloc.isBluetoothEnabledStream,
-                  initialData: false,
-                  builder: (context, snapshot) {
-                    return IconButton(
-                      icon: Icon(Icons.refresh),
-                      iconSize: 48,
-                      onPressed: snapshot.data
-                          ? () => bluetoothBloc.connectDevice()
-                          : null,
-                      color: Theme.of(context).primaryColor,
-                      splashColor: Theme.of(context).accentColor,
-                    );
-                  }),
-            ],
-          ),
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: StreamBuilder<String>(
-                    stream: bluetoothBloc.weighingResultStream,
-                    builder: (context, snapshot) {
-                      String weight = "";
-                      if (snapshot.hasData) {
-                        weight = snapshot.data;
-                      }
-                      return RaisedButton.icon(
-                        onPressed: () {
-                          var weight = double.tryParse(bluetoothBloc.getWeighingResult());
-                          if (weight != null) {
-                            weightController.text = weight.toStringAsFixed(2);
-                            premixBloc.setIsWeighingByBt(true);
-                          }
-                        },
-                        icon: Icon(Icons.arrow_downward),
-                        label: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("$weight KG",
-                              style: TextStyle(fontSize: 16)),
-                        ),
-                      );
-                    }),
+        BluetoothPanel(),
+        WeighingDisplay(),
+        SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            child: RaisedButton.icon(
+              onPressed: () {
+                var weight = double.tryParse(bluetoothBloc.getWeighingResult());
+                if (weight != null) {
+                  weightController.text = weight.toStringAsFixed(2);
+                  weighingBloc.setIsWeighingByBt(true);
+                }
+              },
+              icon: Icon(Icons.arrow_downward),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("GET ${Strings.grossWeight.toUpperCase()}"),
               ),
             ),
-          ],
+          ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: <Widget>[
               Expanded(
                 child: StreamBuilder<bool>(
-                    stream: premixBloc.isWeighingByBtStream,
+                    stream: weighingBloc.isWeighingByBtStream,
                     builder: (context, snapshot) {
                       bool isBt = false;
                       if (snapshot.hasData) {
@@ -162,39 +83,115 @@ class _WeighingState extends State<Weighing> {
                 icon: Icon(Icons.cancel),
                 onPressed: () {
                   weightController.text = "";
-                  premixBloc.setIsWeighingByBt(false);
+                  weighingBloc.setIsWeighingByBt(false);
                 },
               )
             ],
           ),
         ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: RaisedButton.icon(
-                  onPressed: () {
-                    premixBloc
-                        .insertTempPremixDetail(
-                            double.tryParse(weightController.text))
-                        .then((success) {
-                      if (success) {
-                        weightController.text = "";
-                        premixBloc.setIsWeighingByBt(false);
-                      }
-                    });
-                  },
-                  icon: Icon(Icons.add),
-                  label: Text(
-                    Strings.add.toUpperCase(),
-                  ),
-                ),
+        SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            child: RaisedButton.icon(
+              onPressed: () {
+                premixBloc
+                    .insertTempPremixDetail(
+                        double.tryParse(weightController.text))
+                    .then((success) {
+                  if (success) {
+                    weightController.text = "";
+                    weighingBloc.setIsWeighingByBt(false);
+                  }
+                });
+              },
+              icon: Icon(Icons.add),
+              label: Text(
+                Strings.add.toUpperCase(),
               ),
             ),
-          ],
+          ),
         )
       ],
+    );
+  }
+}
+
+class BluetoothPanel extends StatefulWidget {
+  @override
+  _BluetoothPanelState createState() => _BluetoothPanelState();
+}
+
+class _BluetoothPanelState extends State<BluetoothPanel> {
+  @override
+  Widget build(BuildContext context) {
+    final bluetoothBloc = BlocProvider.of<BluetoothBloc>(context);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: <Widget>[
+          StreamBuilder<bool>(
+              stream: bluetoothBloc.isBluetoothEnabledStream,
+              initialData: false,
+              builder: (context, snapshot) {
+                return IconButton(
+                  icon: Icon(Icons.bluetooth),
+                  iconSize: 48,
+                  onPressed: snapshot.data
+                      ? () => showBluetoothDevices(context, bluetoothBloc)
+                      : null,
+                  color: Theme.of(context).primaryColor,
+                  splashColor: Theme.of(context).accentColor,
+                );
+              }),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                StreamBuilder<String>(
+                    stream: bluetoothBloc.statusStream,
+                    builder: (context, snapshot) {
+                      return Text(
+                        "Status : " + snapshot.data.toString(),
+                        style: TextStyle(fontSize: 12),
+                      );
+                    }),
+                StreamBuilder<String>(
+                    stream: bluetoothBloc.nameStream,
+                    builder: (context, snapshot) {
+                      return Text(
+                          "Name : " +
+                              ((snapshot.data != null) ? snapshot.data : ""),
+                          style: TextStyle(fontSize: 12));
+                    }),
+                StreamBuilder<String>(
+                    stream: bluetoothBloc.addressStream,
+                    builder: (context, snapshot) {
+                      return Text(
+                          "Address : " +
+                              ((snapshot.data != null) ? snapshot.data : ""),
+                          style: TextStyle(fontSize: 12));
+                    }),
+              ],
+            ),
+          ),
+          StreamBuilder<bool>(
+              stream: bluetoothBloc.isBluetoothEnabledStream,
+              initialData: false,
+              builder: (context, snapshot) {
+                return IconButton(
+                  icon: Icon(Icons.refresh),
+                  iconSize: 48,
+                  onPressed: snapshot.data
+                      ? () => bluetoothBloc.connectDevice()
+                      : null,
+                  color: Theme.of(context).primaryColor,
+                  splashColor: Theme.of(context).accentColor,
+                );
+              }),
+        ],
+      ),
     );
   }
 
@@ -244,5 +241,89 @@ class _WeighingState extends State<Weighing> {
             ),
           );
         });
+  }
+}
+
+class WeighingDisplay extends StatefulWidget {
+  @override
+  _WeighingDisplayState createState() => _WeighingDisplayState();
+}
+
+class _WeighingDisplayState extends State<WeighingDisplay> {
+  @override
+  Widget build(BuildContext context) {
+    final weighingBloc = BlocProvider.of<PremixWeighingBloc>(context);
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: Column(
+              children: <Widget>[
+                LiveWeight(
+                  weightDesc: Strings.grossWeight,
+                  weightStream: weighingBloc.grossWeightStream,
+                ),
+                LiveWeight(
+                  weightDesc: Strings.tareWeight,
+                  weightStream: weighingBloc.tareWeightStream,
+                ),
+                LiveWeight(
+                  weightDesc: Strings.netWeight,
+                  weightStream: weighingBloc.netWeightStream,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LiveWeight extends StatefulWidget {
+  final String weightDesc;
+  final Stream<double> weightStream;
+
+  LiveWeight({@required this.weightDesc, @required this.weightStream});
+
+  @override
+  _LiveWeightState createState() => _LiveWeightState();
+}
+
+class _LiveWeightState extends State<LiveWeight> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          widget.weightDesc,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        StreamBuilder<double>(
+            stream: widget.weightStream,
+            builder: (context, snapshot) {
+              var weight = 0.00;
+              if (snapshot.hasData) {
+                weight = snapshot.data;
+              }
+              return Text(
+                "${weight.toStringAsFixed(2)} Kg",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'MonoSpace',
+                ),
+              );
+            }),
+      ],
+    );
   }
 }

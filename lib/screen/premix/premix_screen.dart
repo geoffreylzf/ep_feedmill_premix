@@ -3,6 +3,9 @@ import 'package:ep_feedmill/bloc/bluetooth_bloc.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_temp_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_plan_detail_list.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_save.dart';
 import 'package:ep_feedmill/screen/premix/widget/premix_scan.dart';
@@ -26,6 +29,9 @@ class _PremixScreenState extends State<PremixScreen>
     with SingleTickerProviderStateMixin
     implements BluetoothDelegate, PremixDelegate {
   PremixBloc premixBloc;
+  PremixScanBloc scanBloc;
+  PremixTempBloc tempBloc;
+  PremixWeighingBloc weighingBloc;
   BluetoothBloc bluetoothBloc;
 
   TabController _tabController;
@@ -34,8 +40,20 @@ class _PremixScreenState extends State<PremixScreen>
   void initState() {
     super.initState();
     bluetoothBloc = BluetoothBloc(BluetoothType.Weighing, this);
+    scanBloc = PremixScanBloc(
+      delegate: this,
+      mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
+    );
+    tempBloc = PremixTempBloc();
+    weighingBloc = PremixWeighingBloc(
+      tempBloc: tempBloc,
+      bluetoothBloc: bluetoothBloc,
+    );
     premixBloc = PremixBloc(
       delegate: this,
+      scanBloc: scanBloc,
+      tempBloc: tempBloc,
+      weighingBloc: weighingBloc,
       mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
       batchNo: widget.batchNo,
     );
@@ -73,8 +91,11 @@ class _PremixScreenState extends State<PremixScreen>
   Widget build(BuildContext context) {
     return BlocProviderTree(
       blocProviders: [
-        BlocProvider<PremixBloc>(bloc: premixBloc),
         BlocProvider<BluetoothBloc>(bloc: bluetoothBloc),
+        BlocProvider<PremixBloc>(bloc: premixBloc),
+        BlocProvider<PremixScanBloc>(bloc: scanBloc),
+        BlocProvider<PremixTempBloc>(bloc: tempBloc),
+        BlocProvider<PremixWeighingBloc>(bloc: weighingBloc),
       ],
       child: WillPopScope(
         onWillPop: () => _onBackPressed(context),
@@ -95,7 +116,7 @@ class _PremixScreenState extends State<PremixScreen>
                         child: Chip(
                           backgroundColor: Theme.of(context).primaryColorLight,
                           label: Text(
-                            "Batch ${premixBloc.batchNo}",
+                            "${Strings.batch} ${premixBloc.batchNo}",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 12),
                           ),
@@ -125,6 +146,12 @@ class _PremixScreenState extends State<PremixScreen>
       ),
     );
   }
+}
+
+abstract class PremixDelegate {
+  void onTabChange(int i);
+
+  void onPremixError(String message);
 }
 
 class PlanDetailListTab extends StatefulWidget {

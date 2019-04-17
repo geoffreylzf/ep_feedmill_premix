@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/res/string.dart';
-import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
 import 'package:flutter/material.dart';
 
 class Scan extends StatefulWidget {
@@ -39,19 +39,19 @@ class _CodeInputState extends State<CodeInput> {
 
   @override
   Widget build(BuildContext context) {
-    final premixBloc = BlocProvider.of<PremixBloc>(context);
+    final scanBloc = BlocProvider.of<PremixScanBloc>(context);
     _scanController.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
         String text = _scanController.text;
         if (text.isNotEmpty) {
-          premixBloc.scan(int.tryParse(text));
+          scanBloc.scan(int.tryParse(text));
           _scanController.text = "";
         }
       });
     });
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: <Widget>[
           Padding(
@@ -67,6 +67,7 @@ class _CodeInputState extends State<CodeInput> {
               controller: _scanController,
               autofocus: true,
               decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(12.0),
                 border: OutlineInputBorder(),
                 labelText: Strings.barcode,
               ),
@@ -86,11 +87,11 @@ class SelectedIngredient extends StatefulWidget {
 class _SelectedIngredientState extends State<SelectedIngredient> {
   @override
   Widget build(BuildContext context) {
-    final premixBloc = BlocProvider.of<PremixBloc>(context);
+    final scanBloc = BlocProvider.of<PremixScanBloc>(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: StreamBuilder<SelectedItemPacking>(
-          stream: premixBloc.selectedItemPackingStream,
+          stream: scanBloc.selectedItemPackingStream,
           builder: (context, snapshot) {
             var leftIcon = Icons.arrow_upward;
             var rightIcon = Icons.arrow_upward;
@@ -149,7 +150,7 @@ class _SelectedIngredientState extends State<SelectedIngredient> {
                     color: iconColor,
                   ),
                   onPressed: () {
-                    premixBloc.clearSelectedItemPacking();
+                    scanBloc.clearSelectedItemPacking();
                   },
                 ),
               ],

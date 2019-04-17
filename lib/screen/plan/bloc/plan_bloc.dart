@@ -21,9 +21,8 @@ class PlanBloc extends BlocBase {
   }
 
   loadMrfPremixPlanDoc() async {
-    final doc = await MrfPremixPlanDocDao().getByIdWithInfo(
-      mrfPremixPlanDocId: _mrfPremixPlanDocId,
-    );
+    final doc =
+        await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
     _planDocSubject.add(doc);
   }
 

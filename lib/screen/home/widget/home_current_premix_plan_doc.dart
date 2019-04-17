@@ -16,7 +16,7 @@ class _CurrentPremixPlanDocState extends State<CurrentPremixPlanDoc> {
   Card build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     return Card(
-      color: Colors.white70,
+      color: Colors.white54,
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -64,31 +64,73 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
           itemCount: list.length,
           itemBuilder: (context, position) {
             final doc = list[position];
-            return Column(
-              children: <Widget>[
-                position == 0 ? Divider(height: 0) : Container(),
-                InkWell(
-                  child: ListTile(
-                    dense: true,
-                    isThreeLine: false,
-                    title: Text(doc.recipeName),
-                    subtitle: Text(doc.docNo),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () async {
-                      await Future.delayed(Duration(milliseconds: 100));
-                      Navigator.push(
-                        context,
-                        SlideRightRoute(
-                          widget: PlanScreen(
-                            mrfPremixPlanDocId: doc.id,
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey.withOpacity(0.8),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+                child: InkWell(
+                  splashColor: Theme.of(context).accentColor,
+                  onTap: () async {
+                    await Future.delayed(Duration(milliseconds: 100));
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                        widget: PlanScreen(
+                          mrfPremixPlanDocId: doc.id,
+                        ),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                doc.recipeName,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                doc.docNo,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: new BoxDecoration(
+                            color: Theme.of(context).accentColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                              child: Text(
+                            doc.totalBatch.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-                Divider(height: 0),
-              ],
+              ),
             );
           },
         );

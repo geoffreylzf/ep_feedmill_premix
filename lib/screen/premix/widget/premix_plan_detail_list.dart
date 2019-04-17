@@ -2,6 +2,7 @@ import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -13,9 +14,10 @@ class PlanDetailList extends StatefulWidget {
 class _PlanDetailListState extends State<PlanDetailList> {
   @override
   Widget build(BuildContext context) {
-    final _premixBloc = BlocProvider.of<PremixBloc>(context);
+    final premixBloc = BlocProvider.of<PremixBloc>(context);
+    final scanBloc = BlocProvider.of<PremixScanBloc>(context);
     return StreamBuilder<List<MrfPremixPlanDetailWithInfo>>(
-        stream: _premixBloc.planDetailWithInfoListStream,
+        stream: premixBloc.planDetailWithInfoListStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -29,7 +31,8 @@ class _PlanDetailListState extends State<PlanDetailList> {
                   title: Row(
                     children: <Widget>[
                       Expanded(child: Text(list[position].skuName)),
-                      Text("${list[position].formulaWeight.toStringAsFixed(2)} Kg"),
+                      Text(
+                          "${list[position].formulaWeight.toStringAsFixed(2)} Kg"),
                     ],
                   ),
                   children: [
@@ -57,8 +60,8 @@ class _PlanDetailListState extends State<PlanDetailList> {
                           child: RaisedButton.icon(
                             icon: Icon(FontAwesomeIcons.weight),
                             onPressed: () {
-                              _premixBloc
-                                  .manualSelectItemPacking(list[position].itemPackingId);
+                              scanBloc.manualSelectItemPacking(
+                                  list[position].itemPackingId);
                             },
                             label: Text("Enter Weight"),
                           ),

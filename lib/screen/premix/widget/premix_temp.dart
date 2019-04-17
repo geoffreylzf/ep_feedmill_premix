@@ -2,6 +2,7 @@ import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/temp_premix_detail_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_temp_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -35,8 +36,9 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
   @override
   Widget build(BuildContext context) {
     final premixBloc = BlocProvider.of<PremixBloc>(context);
+    final tempBloc = BlocProvider.of<PremixTempBloc>(context);
     return StreamBuilder<List<TempPremixDetailWithInfo>>(
-      stream: premixBloc.tempPremixDetailListStream,
+      stream: tempBloc.tempPremixDetailListStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -108,9 +110,12 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              SmallText("G.W. : ${list[position].grossWeight.toStringAsFixed(2)}"),
-                              SmallText("T.W. : ${list[position].tareWeight.toStringAsFixed(2)}"),
-                              SmallText("N.W. : ${list[position].netWeight.toStringAsFixed(2)}"),
+                              SmallText(
+                                  "G.W. : ${list[position].grossWeight.toStringAsFixed(2)}"),
+                              SmallText(
+                                  "T.W. : ${list[position].tareWeight.toStringAsFixed(2)}"),
+                              SmallText(
+                                  "N.W. : ${list[position].netWeight.toStringAsFixed(2)}"),
                             ],
                           ),
                         ],
@@ -124,7 +129,6 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
     );
   }
 }
-
 
 class SmallText extends StatelessWidget {
   final String text;
@@ -151,7 +155,7 @@ class TotalWeight extends StatefulWidget {
 class _TotalWeightState extends State<TotalWeight> {
   @override
   Widget build(BuildContext context) {
-    final premixBloc = BlocProvider.of<PremixBloc>(context);
+    final tempBloc = BlocProvider.of<PremixTempBloc>(context);
     return Container(
       color: Colors.blueGrey[900],
       child: Padding(
@@ -167,25 +171,23 @@ class _TotalWeightState extends State<TotalWeight> {
               ),
             ),
             StreamBuilder<double>(
-              stream: premixBloc.totalWeightStream,
-              builder: (context, snapshot) {
-                var totalWeight = 0.0;
-                if(snapshot.hasData){
-                  totalWeight = snapshot.data;
-                }
-                return Text(
-                  "${totalWeight.toStringAsFixed(2)} Kg",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                );
-              }
-            ),
+                stream: tempBloc.totalWeightStream,
+                builder: (context, snapshot) {
+                  var totalWeight = 0.0;
+                  if (snapshot.hasData) {
+                    totalWeight = snapshot.data;
+                  }
+                  return Text(
+                    "${totalWeight.toStringAsFixed(2)} Kg",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }),
           ],
         ),
       ),
     );
   }
 }
-

@@ -12,8 +12,8 @@ class PremixDao {
   factory PremixDao() => _instance;
 
   Future<int> insert(Premix premix) async {
-    var db = await AppDb().database;
-    var res = await db.insert(_table, premix.toInsertDbJson());
+    final db = await AppDb().database;
+    final res = await db.insert(_table, premix.toDbJson());
     return res;
   }
 
@@ -34,17 +34,80 @@ class PremixDao {
     return res.isNotEmpty ? Premix.fromJson(res.first) : null;
   }
 
+  Future<PremixWithInfo> getById(int id) async {
+    final db = await AppDb().database;
+    final res = await db.rawQuery("""
+    SELECT
+      premix.*,
+      item_packing.sku_code,
+      item_packing.sku_name
+    FROM premix
+    LEFT JOIN item_packing 
+      ON premix.item_packing_id = item_packing.id
+    WHERE premix.id = ?
+    """, [id]);
+    return res.isNotEmpty ? PremixWithInfo.fromJson(res.first) : null;
+  }
+
   Future<List<Premix>> getAll() async {
     final db = await AppDb().database;
     final res = await db.query(_table, orderBy: "id DESC");
-    List<Premix> list =
-        res.isNotEmpty ? res.map((c) => Premix.fromJson(c)).toList() : [];
-    return list;
+    return res.isNotEmpty ? res.map((c) => Premix.fromJson(c)).toList() : [];
   }
 
-  Future<int> deleteAll() async {
-    var db = await AppDb().database;
-    var res = await db.delete(_table);
-    return res;
+  Future<int> update(Premix premix) async {
+    final db = await AppDb().database;
+    return await db.update(_table, premix.toDbJson(),
+        where: "id = ?", whereArgs: [premix.id]);
+  }
+}
+
+class PremixWithInfo extends Premix {
+  String skuName, skuCode;
+
+  PremixWithInfo({
+    id,
+    mrfPremixPlanDocId,
+    batchNo,
+    groupNo,
+    isUpload,
+    isDelete,
+    timestamp,
+    recipeName,
+    docNo,
+    formulaCategoryId,
+    itemPackingId,
+    this.skuName,
+    this.skuCode,
+  }) : super(
+          id: id,
+          mrfPremixPlanDocId: mrfPremixPlanDocId,
+          batchNo: batchNo,
+          groupNo: groupNo,
+          isUpload: isUpload,
+          isDelete: isDelete,
+          timestamp: timestamp,
+          recipeName: recipeName,
+          docNo: docNo,
+          formulaCategoryId: formulaCategoryId,
+          itemPackingId: itemPackingId,
+        );
+
+  factory PremixWithInfo.fromJson(Map<String, dynamic> json) {
+    return PremixWithInfo(
+      id: json["id"],
+      mrfPremixPlanDocId: json["mrf_premix_plan_doc_id"],
+      batchNo: json["batch_no"],
+      groupNo: json["group_no"],
+      isUpload: json["is_upload"],
+      isDelete: json["is_delete"],
+      timestamp: json["timestamp"],
+      recipeName: json["recipe_name"],
+      docNo: json["doc_no"],
+      formulaCategoryId: json["formula_category_id"],
+      itemPackingId: json["item_packing_id"],
+      skuCode: json["sku_code"],
+      skuName: json["sku_name"],
+    );
   }
 }

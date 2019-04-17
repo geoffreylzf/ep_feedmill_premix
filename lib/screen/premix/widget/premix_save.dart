@@ -3,7 +3,7 @@ import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/screen/print_preview/print_preview_screen.dart';
-import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
+import 'package:ep_feedmill/util/print_util.dart';
 import 'package:flutter/material.dart';
 
 class Save extends StatefulWidget {
@@ -19,20 +19,9 @@ class _SaveState extends State<Save> {
       child: RaisedButton.icon(
         icon: Icon(Icons.save),
         onPressed: () async {
-          final result = await premixBloc.savePremix();
-          if (result) {
-            goPrintPreview(context);
-          }else{
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return SimpleAlertDialog(
-                    title: Strings.error,
-                    message: "Something happen unable to save",
-                    btnText: Strings.close.toUpperCase(),
-                  );
-                });
-          }
+          final premixId = await premixBloc.savePremix();
+          final printText = await PrintUtil().generatePremixReceipt(premixId);
+          goPrintPreview(context, printText);
         },
         label: Text(
           Strings.save.toUpperCase(),
@@ -41,11 +30,11 @@ class _SaveState extends State<Save> {
     );
   }
 
-  goPrintPreview(BuildContext ctx) {
+  goPrintPreview(BuildContext ctx, String printText) async {
     Navigator.of(ctx).pushReplacement(
       SlideRightRoute(
         widget: PrintPreviewScreen(
-          printText: "BLABLABLA",
+          printText: printText,
           qrText: "TUTUTUTUT",
         ),
       ),

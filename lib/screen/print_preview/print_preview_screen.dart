@@ -160,7 +160,7 @@ class _PrintPreviewBodyState extends State<PrintPreviewBody> {
           padding: EdgeInsets.all(8),
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: <Widget>[
                   Text(
