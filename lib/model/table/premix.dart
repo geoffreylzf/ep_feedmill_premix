@@ -86,4 +86,12 @@ class Premix {
     timestamp = DateTimeUtil().getCurrentTimestamp();
     return toJson()..remove("premix_detail_list");
   }
+
+  bool isDeleted(){
+    return isDelete == 1;
+  }
+
+  bool isUploaded(){
+    return isUpload == 1;
+  }
 }

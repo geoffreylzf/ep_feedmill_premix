@@ -57,14 +57,14 @@ class _HistoryListState extends State<HistoryList> {
             itemBuilder: (ctx, position) {
               final premix = list[position];
               return ListTile(
-                trailing:
-                    Column(
-                      children: <Widget>[
-                        Text(Strings.batch + " : " + premix.batchNo.toString()),
-                        Text(Strings.group + " : " + premix.groupNo.toString()),
-                      ],
-                    ),
-                title: Text(premix.recipeName),
+                trailing: Column(
+                  children: <Widget>[
+                    Text(Strings.batch + " : " + premix.batchNo.toString()),
+                    Text(Strings.group + " : " + premix.groupNo.toString()),
+                  ],
+                ),
+                title: Text(premix.recipeName +
+                    (premix.isDeleted() ? " (Deleted)" : "")),
                 subtitle: Text(premix.docNo),
                 onTap: () async {
                   await Future.delayed(Duration(milliseconds: 100));

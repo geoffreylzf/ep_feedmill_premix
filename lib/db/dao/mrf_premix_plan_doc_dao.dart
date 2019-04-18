@@ -32,11 +32,20 @@ class MrfPremixPlanDocDao {
     return res.isNotEmpty ? MrfPremixPlanDocWithInfo.fromJson(res.first) : null;
   }
 
-  Future<List<MrfPremixPlanDoc>> getAll() async {
+  Future<List<MrfPremixPlanDocWithInfo>> getAllWithInfo(String categoryFilterSql) async {
     var db = await AppDb().database;
-    var res = await db.query(_table);
+    var res = await db.rawQuery("""
+    SELECT
+    mrf_premix_plan_doc.*,
+    item_packing.sku_code,
+    item_packing.sku_name
+    FROM mrf_premix_plan_doc
+    LEFT JOIN item_packing 
+      ON mrf_premix_plan_doc.item_packing_id = item_packing.id
+    WHERE formula_category_id IN ($categoryFilterSql)
+    """);
     return res.isNotEmpty
-        ? res.map((c) => MrfPremixPlanDoc.fromJson(c)).toList()
+        ? res.map((c) => MrfPremixPlanDocWithInfo.fromJson(c)).toList()
         : [];
   }
 

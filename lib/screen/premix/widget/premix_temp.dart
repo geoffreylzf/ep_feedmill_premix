@@ -110,12 +110,9 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              SmallText(
-                                  "G.W. : ${list[position].grossWeight.toStringAsFixed(2)}"),
-                              SmallText(
-                                  "T.W. : ${list[position].tareWeight.toStringAsFixed(2)}"),
-                              SmallText(
-                                  "N.W. : ${list[position].netWeight.toStringAsFixed(2)}"),
+                              SmallText("GW", list[position].grossWeight),
+                              SmallText("TW", list[position].tareWeight),
+                              SmallText("NW", list[position].netWeight),
                             ],
                           ),
                         ],
@@ -131,17 +128,19 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
 }
 
 class SmallText extends StatelessWidget {
-  final String text;
+  final String label;
+  final double weight;
 
-  SmallText(this.text);
+  SmallText(this.label, this.weight);
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      "$label : ${weight.toStringAsFixed(2).padLeft(7)}",
       style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,
+        fontFamily: 'MonoSpace',
       ),
     );
   }

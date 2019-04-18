@@ -6,12 +6,13 @@ class SimpleConfirmDialog extends StatelessWidget {
   final VoidCallback vcb;
   final String btnNegativeText;
 
-  SimpleConfirmDialog(
-      {@required this.title,
-      @required this.message,
-      @required this.btnPositiveText,
-      @required this.vcb,
-      this.btnNegativeText: Strings.cancel});
+  SimpleConfirmDialog({
+    @required this.title,
+    @required this.message,
+    @required this.btnPositiveText,
+    @required this.vcb,
+    this.btnNegativeText: Strings.cancel,
+  });
 
   @override
   Widget build(BuildContext context) {

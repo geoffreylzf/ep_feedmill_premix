@@ -101,7 +101,7 @@ class PremixBloc extends BlocBase {
     double tareWeight;
     double netWeight;
 
-    if (lastItemPacking == null) {
+    if (lastItemPacking == null || !_weighingBloc.getIsTaring()) {
       grossWeight = weight;
       tareWeight = 0;
       netWeight = weight;
@@ -160,5 +160,14 @@ class PremixBloc extends BlocBase {
     await _clearTemp();
 
     return premixId;
+  }
+
+  Future<bool> validate() async {
+    final temp = await TempPremixDetailDao().getAll();
+    if (temp.length == 0) {
+      _delegate.onPremixError("Please select at least 1 ingredient to save.");
+      return false;
+    }
+    return true;
   }
 }

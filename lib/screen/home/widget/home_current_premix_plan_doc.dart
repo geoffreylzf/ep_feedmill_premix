@@ -1,6 +1,6 @@
 import 'package:ep_feedmill/animation/slide_right_route.dart';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
-import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
 import 'package:ep_feedmill/screen/plan/plan_screen.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
@@ -53,7 +53,7 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
-    return StreamBuilder<List<MrfPremixPlanDoc>>(
+    return StreamBuilder<List<MrfPremixPlanDocWithInfo>>(
       stream: homeBloc.mrfPremixPlanDocListStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -107,6 +107,11 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
                                   fontSize: 12,
                                 ),
                               ),
+                              Text(doc.skuName,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),)
                             ],
                           ),
                         ),

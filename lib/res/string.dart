@@ -12,6 +12,8 @@ class Strings {
   static const close = "Close";
   static const total = "Total";
   static const delete = "Delete";
+  static const name = "Name";
+  static const success = "Success";
   static const username = "Username";
   static const ingredient = "Ingredient";
   static const remarks = "Remarks";
@@ -25,6 +27,8 @@ class Strings {
   static const login = "Login";
   static const complete = "Complete";
   static const add = "Add";
+  static const address = "Address";
+  static const status = "Status";
   static const batch = "Batch";
   static const group = "Group";
   static const setting = "Setting";
@@ -38,6 +42,13 @@ class Strings {
   static const grossWeight = "Gross Weight";
   static const tareWeight = "Tare Weight";
   static const netWeight = "Net Weight";
+  static const broiler = "Broiler";
+  static const breeder = "Breeder";
+  static const swine = "Swine";
+  static const formulaCategory = "Formula Catgory";
+  static const retrieveHousekeeping = "Retrieve Housekeeping";
+  static const allowTare = "Allow Tare";
+  static const allowAddon = "Allow Add On";
 
   static const msgPleaseEnterUsername = "Please enter username";
   static const msgPleaseEnterPassword = "Please enter password";

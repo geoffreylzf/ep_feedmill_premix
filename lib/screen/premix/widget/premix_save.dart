@@ -4,6 +4,7 @@ import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/screen/print_preview/print_preview_screen.dart';
 import 'package:ep_feedmill/util/print_util.dart';
+import 'package:ep_feedmill/widget/simple_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
 class Save extends StatefulWidget {
@@ -18,10 +19,12 @@ class _SaveState extends State<Save> {
     return Center(
       child: RaisedButton.icon(
         icon: Icon(Icons.save),
-        onPressed: () async {
-          final premixId = await premixBloc.savePremix();
-          final printText = await PrintUtil().generatePremixReceipt(premixId);
-          goPrintPreview(context, printText);
+        onPressed: () {
+          premixBloc.validate().then((r) {
+            if (r) {
+              _confirmSave(premixBloc);
+            }
+          });
         },
         label: Text(
           Strings.save.toUpperCase(),
@@ -30,7 +33,25 @@ class _SaveState extends State<Save> {
     );
   }
 
-  goPrintPreview(BuildContext ctx, String printText) async {
+  _confirmSave(PremixBloc premixBloc) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleConfirmDialog(
+          title: "Save?",
+          message: "Edit is not allow after save.",
+          btnPositiveText: Strings.save,
+          vcb: () async {
+            final premixId = await premixBloc.savePremix();
+            final printText = await PrintUtil().generatePremixReceipt(premixId);
+            _goPrintPreview(context, printText);
+          },
+        );
+      },
+    );
+  }
+
+  _goPrintPreview(BuildContext ctx, String printText) async {
     Navigator.of(ctx).pushReplacement(
       SlideRightRoute(
         widget: PrintPreviewScreen(

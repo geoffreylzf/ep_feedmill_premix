@@ -3,6 +3,7 @@ import 'package:ep_feedmill/bloc/bluetooth_bloc.dart';
 import 'package:ep_feedmill/module/bluetooth_module.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
+import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +31,7 @@ class _WeighingState extends State<Weighing> {
   Widget build(BuildContext context) {
     final bluetoothBloc = BlocProvider.of<BluetoothBloc>(context);
     final weighingBloc = BlocProvider.of<PremixWeighingBloc>(context);
+    final scanBloc = BlocProvider.of<PremixScanBloc>(context);
     final premixBloc = BlocProvider.of<PremixBloc>(context);
 
     return ListView(
@@ -111,7 +113,45 @@ class _WeighingState extends State<Weighing> {
               ),
             ),
           ),
-        )
+        ),
+        SizedBox(height: 295),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                StreamBuilder<bool>(
+                    stream: weighingBloc.isTaringStream,
+                    initialData: true,
+                    builder: (context, snapshot) {
+                      return Checkbox(
+                        value: snapshot.data,
+                        onChanged: (bool b) {
+                          weighingBloc.setIsTaring(b);
+                        },
+                      );
+                    }),
+                Text(Strings.allowTare),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                StreamBuilder<bool>(
+                    stream: scanBloc.isAllowAddonStream,
+                    initialData: false,
+                    builder: (context, snapshot) {
+                      return Checkbox(
+                        value: snapshot.data,
+                        onChanged: (bool b) {
+                          scanBloc.setIsAllowAddon(b);
+                        },
+                      );
+                    }),
+                Text(Strings.allowAddon),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -153,24 +193,21 @@ class _BluetoothPanelState extends State<BluetoothPanel> {
                     stream: bluetoothBloc.statusStream,
                     builder: (context, snapshot) {
                       return Text(
-                        "Status : " + snapshot.data.toString(),
+                        "${Strings.status} : ${snapshot.data.toString()}",
                         style: TextStyle(fontSize: 12),
                       );
                     }),
                 StreamBuilder<String>(
                     stream: bluetoothBloc.nameStream,
                     builder: (context, snapshot) {
-                      return Text(
-                          "Name : " +
-                              ((snapshot.data != null) ? snapshot.data : ""),
+                      return Text("${Strings.name} : ${(snapshot.data ?? "")}",
                           style: TextStyle(fontSize: 12));
                     }),
                 StreamBuilder<String>(
                     stream: bluetoothBloc.addressStream,
                     builder: (context, snapshot) {
                       return Text(
-                          "Address : " +
-                              ((snapshot.data != null) ? snapshot.data : ""),
+                          "${Strings.address} : ${(snapshot.data ?? "")}",
                           style: TextStyle(fontSize: 12));
                     }),
               ],
@@ -270,10 +307,18 @@ class _WeighingDisplayState extends State<WeighingDisplay> {
                   weightDesc: Strings.grossWeight,
                   weightStream: weighingBloc.grossWeightStream,
                 ),
-                LiveWeight(
-                  weightDesc: Strings.tareWeight,
-                  weightStream: weighingBloc.tareWeightStream,
-                ),
+                StreamBuilder<bool>(
+                    initialData: true,
+                    stream: weighingBloc.isTaringStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.data) {
+                        return LiveWeight(
+                          weightDesc: Strings.tareWeight,
+                          weightStream: weighingBloc.tareWeightStream,
+                        );
+                      }
+                      return Container();
+                    }),
                 LiveWeight(
                   weightDesc: Strings.netWeight,
                   weightStream: weighingBloc.netWeightStream,

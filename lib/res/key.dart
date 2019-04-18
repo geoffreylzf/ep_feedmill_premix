@@ -9,4 +9,8 @@ class Keys {
   static const bluetoothWeighingAddress = "bluetoothWeighingAddress";
 
   static const groupNo = "groupNo";
+
+  static const broilerChecked = "broilerChecked";
+  static const breederChecked = "breederChecked";
+  static const swineChecked = "swineChecked";
 }

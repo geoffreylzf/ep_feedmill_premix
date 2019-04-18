@@ -87,4 +87,34 @@ class SharedPreferencesModule {
     final prefs = await sp;
     return prefs.getInt(Keys.groupNo);
   }
+
+  saveBroilerCheck(bool b) async{
+    final prefs = await sp;
+    await prefs.setBool(Keys.broilerChecked, b);
+  }
+
+  Future<bool> getBroilerCheck() async {
+    final prefs = await sp;
+    return prefs.getBool(Keys.broilerChecked);
+  }
+
+  saveBreederCheck(bool b) async{
+    final prefs = await sp;
+    await prefs.setBool(Keys.breederChecked, b);
+  }
+
+  Future<bool> getBreederCheck() async {
+    final prefs = await sp;
+    return prefs.getBool(Keys.breederChecked);
+  }
+
+  saveSwineCheck(bool b) async{
+    final prefs = await sp;
+    await prefs.setBool(Keys.swineChecked, b);
+  }
+
+  Future<bool> getSwineCheck() async {
+    final prefs = await sp;
+    return prefs.getBool(Keys.swineChecked);
+  }
 }

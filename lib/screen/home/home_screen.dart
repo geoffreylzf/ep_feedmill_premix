@@ -3,6 +3,7 @@ import 'package:ep_feedmill/res/nav.dart';
 import 'package:ep_feedmill/res/route.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
+import 'package:ep_feedmill/screen/home/widget/home_category_selection.dart';
 import 'package:ep_feedmill/screen/home/widget/home_current_premix_plan_doc.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Center(
               child: Opacity(
-                opacity: 0.10,
+                opacity: 0.20,
                 child: StoreConnector<int, String>(
                   converter: (store) => store.state.toString(),
                   builder: (ctx, count) {
@@ -63,14 +64,19 @@ class Dashboard extends StatelessWidget {
           flex: 3,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
-            child: CurrentPremixPlanDoc(),
+            child: Column(
+              children: <Widget>[
+                CategorySelection(),
+                PremixCard(),
+              ],
+            ),
           ),
         ),
         Expanded(
-          flex: 2,
+          flex: 5,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
-            child: PremixCard(),
+            child: CurrentPremixPlanDoc(),
           ),
         ),
       ],
@@ -82,6 +88,8 @@ class PremixCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white70,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

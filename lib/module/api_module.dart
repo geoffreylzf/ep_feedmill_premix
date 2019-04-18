@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ep_feedmill/model/api_response.dart';
 import 'package:ep_feedmill/model/auth.dart';
 import 'package:ep_feedmill/model/table/item_packing.dart';
+import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/model/user.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
@@ -59,10 +60,21 @@ class ApiModule {
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
 
+  Future<ApiResponse<List<MrfFormulaCategory>>> getMrfFormulaCategory() async {
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
+
+    final response = await get(
+      constructUrl(_housekeepingModule) + "&type=mrf_formula_category",
+      headers: {'authorization': basicAuth},
+    );
+    return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
+  }
+
   Future<ApiResponse<List<MrfPremixPlanDoc>>> getMrfPremixPlanDoc() async {
     final user = await SharedPreferencesModule().getUser();
     String basicAuth = user.getCredential();
-    
+
     final response = await get(
       constructUrl(_housekeepingModule) + "&type=mrf_premix_plan_doc",
       headers: {'authorization': basicAuth},

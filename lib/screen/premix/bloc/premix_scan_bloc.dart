@@ -9,17 +9,21 @@ import 'package:rxdart/rxdart.dart';
 class PremixScanBloc extends BlocBase {
   final _selectedItemPackingSubject = BehaviorSubject<SelectedItemPacking>();
   final _isItemPackingSelectedSubject = BehaviorSubject<bool>.seeded(false);
+  final _isAllowAddonSubject = BehaviorSubject<bool>.seeded(false);
+
+  Stream<SelectedItemPacking> get selectedItemPackingStream =>
+      _selectedItemPackingSubject.stream;
 
   Stream<bool> get isItemPackingSelectedStream =>
       _isItemPackingSelectedSubject.stream;
 
-  Stream<SelectedItemPacking> get selectedItemPackingStream =>
-      _selectedItemPackingSubject.stream;
+  Stream<bool> get isAllowAddonStream => _isAllowAddonSubject.stream;
 
   @override
   void dispose() {
     _isItemPackingSelectedSubject.close();
     _selectedItemPackingSubject.close();
+    _isAllowAddonSubject.close();
   }
 
   PremixDelegate _delegate;
@@ -63,25 +67,29 @@ class PremixScanBloc extends BlocBase {
       return;
     }
 
+    var planDetailId;
     var formulaWeight = 0.0;
 
-    final planDetail = await MrfPremixPlanDetailDao()
-        .getByMrfPremixPlanDocIdGroupNoItemPackingId(
-            mrfPremixPlanDocId: _mrfPremixPlanDocId,
-            groupNo: _groupNo,
-            itemPackingId: itemPackingId);
+    if (!getIsAllowAddon()) {
+      final planDetail = await MrfPremixPlanDetailDao()
+          .getByMrfPremixPlanDocIdGroupNoItemPackingId(
+              mrfPremixPlanDocId: _mrfPremixPlanDocId,
+              groupNo: _groupNo,
+              itemPackingId: itemPackingId);
 
-    if (planDetail == null) {
-      _selectedItemPackingSubject.add(SelectedItemPacking.error(
-          errorMessage: "Selected ingredient is not in plan formula"));
-      return;
-    } else {
-      formulaWeight = planDetail.formulaWeight;
+      if (planDetail == null) {
+        _selectedItemPackingSubject.add(SelectedItemPacking.error(
+            errorMessage: "Selected ingredient is not in plan formula"));
+        return;
+      } else {
+        planDetailId = planDetail.id;
+        formulaWeight = planDetail.formulaWeight;
+      }
     }
 
     _selectedItemPackingSubject.add(SelectedItemPacking(
         id: itemPacking.id,
-        mrfPremixPlanDetailId: planDetail.id,
+        mrfPremixPlanDetailId: planDetailId,
         skuName: itemPacking.skuName,
         skuCode: itemPacking.skuCode,
         weight: formulaWeight));
@@ -95,6 +103,14 @@ class PremixScanBloc extends BlocBase {
 
   SelectedItemPacking getSelectedItemPacking() {
     return _selectedItemPackingSubject.value;
+  }
+
+  setIsAllowAddon(bool b) {
+    _isAllowAddonSubject.add(b);
+  }
+
+  bool getIsAllowAddon() {
+    return _isAllowAddonSubject.value;
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:ep_feedmill/model/auth.dart';
 import 'package:ep_feedmill/model/table/item_packing.dart';
+import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 
 class ApiResponse<T> {
@@ -19,6 +20,9 @@ class ApiResponse<T> {
     } else if (T.toString() == "List<MrfPremixPlanDoc>") {
       result = new List<MrfPremixPlanDoc>.from(
           json["result"].map((x) => MrfPremixPlanDoc.fromJson(x)));
+    } else if (T.toString() == "List<MrfFormulaCategory>") {
+      result = new List<MrfFormulaCategory>.from(
+          json["result"].map((x) => MrfFormulaCategory.fromJson(x)));
     }
 
     return ApiResponse(cod: json['cod'], result: result);

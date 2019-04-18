@@ -29,6 +29,7 @@ class AppDb {
       version: _version,
       onCreate: (Database db, int version) async {
         await db.execute(DbSql.createItemPackingTable);
+        await db.execute(DbSql.createMrfFormulaCategoryTable);
         await db.execute(DbSql.createMrfPremixPlanDocTable);
         await db.execute(DbSql.createMrfPremixPlanDocDetailTable);
 

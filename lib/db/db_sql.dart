@@ -6,6 +6,13 @@ class DbSql {
       `sku_name` TEXT);
       """;
 
+  static final createMrfFormulaCategoryTable = """
+      CREATE TABLE `mrf_formula_category` (
+      `id` INTEGER PRIMARY KEY, 
+      `formula_category_code` TEXT, 
+      `formula_category_name` TEXT);
+      """;
+
   static final createMrfPremixPlanDocTable = """
       CREATE TABLE `mrf_premix_plan_doc` (
       `id` INTEGER PRIMARY KEY,
