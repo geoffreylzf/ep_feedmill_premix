@@ -1,3 +1,4 @@
+import 'package:ep_feedmill/model/network_printer_device.dart';
 import 'package:ep_feedmill/model/user.dart';
 import 'package:ep_feedmill/module/bluetooth_module.dart';
 import 'package:ep_feedmill/res/key.dart';
@@ -60,6 +61,24 @@ class SharedPreferencesModule {
     return BluetoothDevice(name, address);
   }
 
+  saveNetworkPrinter(NetworkPrinterDevice device) async {
+    final prefs = await sp;
+    await prefs.setString(Keys.networkPrinterIp, device.ip);
+    await prefs.setInt(Keys.networkPrinterPort, device.port);
+  }
+
+  Future<NetworkPrinterDevice> getNetworkPrinter() async {
+    final prefs = await sp;
+    final ip = prefs.getString(Keys.networkPrinterIp);
+    final port = prefs.getInt(Keys.networkPrinterPort);
+
+    if (ip == null || port == null) {
+      return null;
+    }
+
+    return NetworkPrinterDevice(ip, port);
+  }
+
   saveBluetoothWeighing(BluetoothDevice device) async {
     final prefs = await sp;
     await prefs.setString(Keys.bluetoothWeighingName, device.name);
@@ -85,10 +104,10 @@ class SharedPreferencesModule {
 
   Future<int> getGroupNo() async {
     final prefs = await sp;
-    return prefs.getInt(Keys.groupNo);
+    return prefs.getInt(Keys.groupNo) ?? 0;
   }
 
-  saveBroilerCheck(bool b) async{
+  saveBroilerCheck(bool b) async {
     final prefs = await sp;
     await prefs.setBool(Keys.broilerChecked, b);
   }
@@ -98,7 +117,7 @@ class SharedPreferencesModule {
     return prefs.getBool(Keys.broilerChecked);
   }
 
-  saveBreederCheck(bool b) async{
+  saveBreederCheck(bool b) async {
     final prefs = await sp;
     await prefs.setBool(Keys.breederChecked, b);
   }
@@ -108,7 +127,7 @@ class SharedPreferencesModule {
     return prefs.getBool(Keys.breederChecked);
   }
 
-  saveSwineCheck(bool b) async{
+  saveSwineCheck(bool b) async {
     final prefs = await sp;
     await prefs.setBool(Keys.swineChecked, b);
   }

@@ -5,6 +5,9 @@ class Keys {
   static const bluetoothPrinterName = "bluetoothPrinterName";
   static const bluetoothPrinterAddress = "bluetoothPrinterAddress";
 
+  static const networkPrinterIp = "networkPrinterIp";
+  static const networkPrinterPort = "networkPrinterPort";
+
   static const bluetoothWeighingName = "bluetoothWeighingName";
   static const bluetoothWeighingAddress = "bluetoothWeighingAddress";
 

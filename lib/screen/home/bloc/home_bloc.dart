@@ -1,10 +1,14 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
+import 'package:ep_feedmill/db/dao/premix_dao.dart';
 import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/module/api_module.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
+import 'package:ep_feedmill/res/string.dart';
+import 'package:ep_feedmill/screen/home/home_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeBloc extends BlocBase {
@@ -44,7 +48,10 @@ class HomeBloc extends BlocBase {
 
   String _categoryFilterSql;
 
-  HomeBloc() {
+  HomeDelegate _delegate;
+
+  HomeBloc({@required HomeDelegate delegate}) {
+    _delegate = delegate;
     init();
   }
 
@@ -58,27 +65,36 @@ class HomeBloc extends BlocBase {
 
     categorySqlStream.listen((sql) {
       _categoryFilterSql = sql;
-      _loadMrfPremixPlanDoc();
+      loadMrfPremixPlanDoc();
     });
   }
 
-  _loadMrfPremixPlanDoc() async {
-    _mrfPremixPlanDocListSubject
-        .add(await MrfPremixPlanDocDao().getAllWithInfo(_categoryFilterSql));
+  loadMrfPremixPlanDoc() async {
+    final groupNo = await SharedPreferencesModule().getGroupNo();
+    _mrfPremixPlanDocListSubject.add(await MrfPremixPlanDocDao()
+        .getAllWithInfo(_categoryFilterSql, groupNo));
   }
 
   retrieveCurrentMrfPremixPlan() async {
-    var response = await ApiModule().getMrfPremixPlanDoc();
-    await MrfPremixPlanDocDao().deleteAll();
-    await MrfPremixPlanDetailDao().deleteAll();
+    try {
+      _mrfPremixPlanDocListSubject.add(null);
+      var response = await ApiModule().getMrfPremixPlanDoc();
+      await MrfPremixPlanDocDao().deleteAll();
+      await MrfPremixPlanDetailDao().deleteAll();
 
-    await Future.forEach<MrfPremixPlanDoc>(response.result, (doc) async {
-      await MrfPremixPlanDocDao().insert(doc);
-      await Future.forEach(doc.mrfPremixPlanDetailList, (detail) async {
-        await MrfPremixPlanDetailDao().insert(detail);
+      await Future.forEach<MrfPremixPlanDoc>(response.result, (doc) async {
+        await MrfPremixPlanDocDao().insert(doc);
+        await Future.forEach(doc.mrfPremixPlanDetailList, (detail) async {
+          await MrfPremixPlanDetailDao().insert(detail);
+        });
       });
-    });
-    await _loadMrfPremixPlanDoc();
+      _delegate.onDialogMessage(Strings.success,
+          "Newest premix plan document successfully retrieve.");
+    } catch (e) {
+      _delegate.onDialogMessage(Strings.success, e.toString());
+    } finally {
+      await loadMrfPremixPlanDoc();
+    }
   }
 
   setBroilerChecked(bool b) async {
@@ -94,5 +110,13 @@ class HomeBloc extends BlocBase {
   setSwineChecked(bool b) async {
     await SharedPreferencesModule().saveSwineCheck(b);
     _swineCheckedSubject.add(b);
+  }
+
+  Future<int> getBatchDoneCount(int mrfPremixPlanDocId) async {
+    final groupNo = await SharedPreferencesModule().getGroupNo();
+    return await PremixDao().getCountByMrfPremixPlanDocIdGroupNo(
+      mrfPremixPlanDocId: mrfPremixPlanDocId,
+      groupNo: groupNo,
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/plan/bloc/plan_bloc.dart';
 import 'package:ep_feedmill/screen/plan/widget/plan_batch_selection.dart';
+import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -15,13 +16,29 @@ class PlanScreen extends StatefulWidget {
   _PlanScreenState createState() => _PlanScreenState();
 }
 
-class _PlanScreenState extends State<PlanScreen> {
+class _PlanScreenState extends State<PlanScreen> implements PlanDelegate {
   PlanBloc planBloc;
+
+  @override
+  void onDialogMessage(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleAlertDialog(
+            title: title,
+            message: message,
+            btnText: Strings.close.toUpperCase(),
+          );
+        });
+  }
 
   @override
   void initState() {
     super.initState();
-    planBloc = PlanBloc(mrfPremixPlanDocId: widget.mrfPremixPlanDocId);
+    planBloc = PlanBloc(
+      delegate: this,
+      mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
+    );
   }
 
   @override
@@ -44,6 +61,10 @@ class _PlanScreenState extends State<PlanScreen> {
       ),
     );
   }
+}
+
+abstract class PlanDelegate {
+  void onDialogMessage(String title, String message);
 }
 
 class PlanInfo extends StatefulWidget {

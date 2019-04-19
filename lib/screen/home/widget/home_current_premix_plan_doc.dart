@@ -53,10 +53,14 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
+    homeBloc.loadMrfPremixPlanDoc();
     return StreamBuilder<List<MrfPremixPlanDocWithInfo>>(
       stream: homeBloc.mrfPremixPlanDocListStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.data == null) {
           return Center(child: CircularProgressIndicator());
         }
         final list = snapshot.data;
@@ -107,29 +111,39 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
                                   fontSize: 12,
                                 ),
                               ),
-                              Text(doc.skuName,
+                              Text(
+                                doc.skuName ?? "",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
-                                ),)
+                                ),
+                              )
                             ],
                           ),
                         ),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: new BoxDecoration(
-                            color: Theme.of(context).accentColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                              child: Text(
-                            doc.totalBatch.toString(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )),
+                        FutureBuilder<int>(
+                          initialData: 0,
+                          future: homeBloc.getBatchDoneCount(doc.id),
+                          builder: (ctx, snapshot) {
+                            return Container(
+                              width: 64,
+                              height: 32,
+                              decoration: new BoxDecoration(
+                                color: Theme.of(context).accentColor,
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                "${snapshot.data.toString()} / ${doc.totalBatch.toString()}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )),
+                            );
+                          },
                         )
                       ],
                     ),

@@ -20,6 +20,7 @@ class Strings {
   static const weightKg = "Weight (Kg)";
   static const password = "Password";
   static const save = "Save";
+  static const testPrint = "Test Print";
   static const back = "Back";
   static const cancel = "Cancel";
   static const barcode = "Barcode";
@@ -35,6 +36,9 @@ class Strings {
   static const skuCode = "Sku Code";
   static const signOut = "Sign Out";
   static const printPreview = "Print Preview";
+  static const networkPrinter = "Network Printer";
+  static const printerIpAddressExample = "Printer Ip Address (Example: 192.168.100.100)";
+  static const port = "Port";
   static const bluetoothDevices = "Bluetooth Devices";
   static const grossWeightKg = "Gross Weight (Kg)";
   static const tareWeightKg = "Tare Weight (Kg)";
@@ -52,5 +56,7 @@ class Strings {
 
   static const msgPleaseEnterUsername = "Please enter username";
   static const msgPleaseEnterPassword = "Please enter password";
+  static const msgPleaseEnterIp = "Please enter IP Address";
+  static const msgPleaseEnterPort = "Please enter port";
   static const msgSignInWithGoogle = "Sign in with Google";
 }

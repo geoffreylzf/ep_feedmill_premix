@@ -34,6 +34,23 @@ class PremixDao {
     return res.isNotEmpty ? Premix.fromJson(res.first) : null;
   }
 
+  Future<int> getCountByMrfPremixPlanDocIdGroupNo({
+    @required int mrfPremixPlanDocId,
+    @required int groupNo,
+    int isDelete: 0,
+  }) async {
+    final db = await AppDb().database;
+    final res = await db.rawQuery("""
+    SELECT 
+      COUNT(*) as count
+    FROM premix
+    WHERE mrf_premix_plan_doc_id = ?
+    AND group_no = ? 
+    AND is_delete = ?
+    """, [mrfPremixPlanDocId, groupNo, isDelete]);
+    return res.isNotEmpty ? res.first['count'] : 0;
+  }
+
   Future<PremixWithInfo> getById(int id) async {
     final db = await AppDb().database;
     final res = await db.rawQuery("""

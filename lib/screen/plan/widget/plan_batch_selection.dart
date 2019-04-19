@@ -4,7 +4,6 @@ import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/plan/bloc/plan_bloc.dart';
 import 'package:ep_feedmill/screen/premix/premix_screen.dart';
-import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -70,28 +69,22 @@ class _BatchCardState extends State<BatchCard> {
                 child: InkWell(
                   splashColor: Theme.of(context).accentColor,
                   onTap: () async {
-                    if (!snapshot.data) {
-                      await Future.delayed(Duration(milliseconds: 100));
-                      Navigator.push(
-                        context,
-                        SlideRightRoute(
-                          widget: PremixScreen(
-                            mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
-                            batchNo: widget.batchNo,
+                    planBloc
+                        .validateBeforeStartPremix(isDone: snapshot.data)
+                        .then((b) async {
+                      if (b) {
+                        await Future.delayed(Duration(milliseconds: 100));
+                        Navigator.push(
+                          context,
+                          SlideRightRoute(
+                            widget: PremixScreen(
+                              mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
+                              batchNo: widget.batchNo,
+                            ),
                           ),
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return SimpleAlertDialog(
-                              title: Strings.error,
-                              message: "Batch already done.",
-                              btnText: Strings.close.toUpperCase(),
-                            );
-                          });
-                    }
+                        );
+                      }
+                    });
                   },
                   child: Center(
                     child: Column(

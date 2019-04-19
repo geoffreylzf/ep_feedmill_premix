@@ -73,6 +73,24 @@ class MrfPremixPlanDetailDao {
         ? MrfPremixPlanDetailWithInfo.fromJson(res.first)
         : null;
   }
+
+  Future<int> getCountOfNotExistIngredient({
+    @required int mrfPremixPlanDocId,
+    @required int groupNo,
+  }) async {
+    var db = await AppDb().database;
+    var res = await db.rawQuery("""
+    
+    SELECT
+      COUNT(detail.id) AS count
+    FROM mrf_premix_plan_detail detail
+    WHERE detail.mrf_premix_plan_doc_id = ?
+    AND detail.group_no = ?
+    AND detail.item_packing_id NOT IN
+      (SELECT id FROM item_packing) 
+    """, [mrfPremixPlanDocId, groupNo]);
+    return res.isNotEmpty ? res.first['count'] : 0;
+  }
 }
 
 class MrfPremixPlanDetailWithInfo extends MrfPremixPlanDetail {

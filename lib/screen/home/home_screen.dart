@@ -6,6 +6,7 @@ import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
 import 'package:ep_feedmill/screen/home/widget/home_category_selection.dart';
 import 'package:ep_feedmill/screen/home/widget/home_current_premix_plan_doc.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
+import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -14,13 +15,26 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> implements HomeDelegate {
   HomeBloc homeBloc;
+
+  @override
+  void onDialogMessage(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleAlertDialog(
+            title: title,
+            message: message,
+            btnText: Strings.close.toUpperCase(),
+          );
+        });
+  }
 
   @override
   void initState() {
     super.initState();
-    homeBloc = HomeBloc();
+    homeBloc = HomeBloc(delegate: this);
   }
 
   @override
@@ -52,6 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+abstract class HomeDelegate {
+  void onDialogMessage(String title, String message);
 }
 
 class Dashboard extends StatelessWidget {

@@ -39,6 +39,13 @@ class PrintUtil {
     s += _fmtLeftLine("Printed By : " + user.username);
     s += _fmtLeftLine("Date : " + DateTimeUtil().getCurrentDate());
     s += _fmtLeftLine("Time : " + DateTimeUtil().getCurrentTime());
+
+    if(premix.isDeleted()){
+      s += _fmtLeftLine("---Deleted---");
+    }
+    if(premix.isUploaded()){
+      s += _fmtLeftLine("---Uploaded---");
+    }
     s += _fmtLeftLine();
     s += _fmtLeftLine();
     s += _fmtLeftLine();
