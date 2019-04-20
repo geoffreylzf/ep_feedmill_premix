@@ -52,10 +52,10 @@ class HomeBloc extends BlocBase {
 
   HomeBloc({@required HomeDelegate delegate}) {
     _delegate = delegate;
-    init();
+    _init();
   }
 
-  init() async {
+  _init() async {
     _broilerCheckedSubject
         .add(await SharedPreferencesModule().getBroilerCheck() ?? false);
     _breederCheckedSubject

@@ -9,9 +9,9 @@ import io.flutter.plugins.GeneratedPluginRegistrant
 import my.com.engpeng.ep_feedmill.platformHandler.BluetoothMethodHandler
 import my.com.engpeng.ep_feedmill.platformHandler.BluetoothReadHandler
 import my.com.engpeng.ep_feedmill.platformHandler.BluetoothStatusHandler
-import my.com.engpeng.ep_feedmill.platformHandler.QrMethodHandler
+import my.com.engpeng.ep_feedmill.platformHandler.BarcodeMethodHandler
 
-const val QR_METHOD_CHANNEL = "qr.epfeedmill.flutter.io/method"
+const val BARCODE_METHOD_CHANNEL = "barcode.epfeedmill.flutter.io/method"
 const val BLUETOOTH_METHOD_CHANNEL = "bluetooth.epfeedmill.flutter.io/method"
 const val BLUETOOTH_STATUS_CHANNEL = "bluetooth.epfeedmill.flutter.io/status"
 const val BLUETOOTH_READ_CHANNEL = "bluetooth.epfeedmill.flutter.io/read"
@@ -24,7 +24,7 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
         GeneratedPluginRegistrant.registerWith(this)
 
-        MethodChannel(flutterView, QR_METHOD_CHANNEL).setMethodCallHandler(QrMethodHandler())
+        MethodChannel(flutterView, BARCODE_METHOD_CHANNEL).setMethodCallHandler(BarcodeMethodHandler())
 
         MethodChannel(flutterView, BLUETOOTH_METHOD_CHANNEL)
                 .setMethodCallHandler(BluetoothMethodHandler(bluetooth))

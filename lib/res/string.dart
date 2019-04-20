@@ -37,6 +37,7 @@ class Strings {
   static const signOut = "Sign Out";
   static const printPreview = "Print Preview";
   static const networkPrinter = "Network Printer";
+  static const ipAddress = "IP Address";
   static const printerIpAddressExample = "Printer Ip Address (Example: 192.168.100.100)";
   static const port = "Port";
   static const bluetoothDevices = "Bluetooth Devices";

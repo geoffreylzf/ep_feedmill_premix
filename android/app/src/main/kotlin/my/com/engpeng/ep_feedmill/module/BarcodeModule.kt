@@ -10,12 +10,14 @@ import java.util.*
 
 
 private const val HEX_STR = "0123456789ABCDEF"
-private const val QR_WIDTH = 500
-private const val QR_HEIGHT = 500
 private const val QR_STRIDE = 500
 private const val QR_HALF = 250
 
-class QrModule(private val text: String) {
+class BarcodeModule(private val text: String) {
+
+    private var barcodeWidth = 500
+    private var barcodeHeight = 500
+    private var barcodeFormat = BarcodeFormat.QR_CODE
 
     fun convertToQrByteArray():  ByteArray{
         val bmp = this.encodeStringAsQrCodeBitmap(text)
@@ -28,13 +30,24 @@ class QrModule(private val text: String) {
         return bmpTopByte!!.plus(bmpBottomByte!!)
     }
 
+    fun convertToCode128ByteArray(): ByteArray {
+        barcodeWidth = 500
+        barcodeHeight = 150
+        barcodeFormat = BarcodeFormat.CODE_128
+
+        val bmp = this.encodeStringAsQrCodeBitmap(text)
+        val bmpByte = this.decodeBitmapAsByteArray(bmp)
+
+        return bmpByte!!
+    }
+
     private val binaryArray = arrayOf("0000", "0001", "0010", "0011",
             "0100", "0101", "0110", "0111",
             "1000", "1001", "1010", "1011",
             "1100", "1101", "1110", "1111")
 
     private fun encodeStringAsQrCodeBitmap(str: String): Bitmap {
-        val result = MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT)
+        val result = MultiFormatWriter().encode(str, barcodeFormat, barcodeWidth, barcodeHeight)
 
         val width = result.width
         val height = result.height
@@ -51,11 +64,11 @@ class QrModule(private val text: String) {
     }
 
     private fun getTopPartBitmap(bitmap: Bitmap): Bitmap {
-        return Bitmap.createBitmap(bitmap, 0, 0, QR_WIDTH, QR_HALF)
+        return Bitmap.createBitmap(bitmap, 0, 0, barcodeWidth, QR_HALF)
     }
 
     private fun getBottomPartBitmap(bitmap: Bitmap): Bitmap {
-        return Bitmap.createBitmap(bitmap, 0, QR_HALF, QR_WIDTH, QR_HALF)
+        return Bitmap.createBitmap(bitmap, 0, QR_HALF, barcodeWidth, QR_HALF)
     }
 
     private fun decodeBitmapAsByteArray(bmp: Bitmap): ByteArray? {

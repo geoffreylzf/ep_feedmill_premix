@@ -4,7 +4,7 @@ import app.akexorcist.bluetotohspp.library.BluetoothSPP
 import app.akexorcist.bluetotohspp.library.BluetoothState
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import my.com.engpeng.ep_feedmill.module.QrModule
+import my.com.engpeng.ep_feedmill.module.BarcodeModule
 import java.util.*
 
 class BluetoothMethodHandler(
@@ -75,7 +75,7 @@ class BluetoothMethodHandler(
             "printQr" -> {
                 if (call.hasArgument("qr")) {
                     val qr = call.argument<String>("qr")!!
-                    val bytes = QrModule(qr).convertToQrByteArray()
+                    val bytes = BarcodeModule(qr).convertToQrByteArray()
                     bluetooth.send(bytes, true)
                     result.success(null)
                 } else {
