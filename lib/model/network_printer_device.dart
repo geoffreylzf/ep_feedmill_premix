@@ -34,8 +34,12 @@ class NetworkPrinterDevice {
   }
 
   forceCloseSocket() async {
-    await socket.close();
-    socket.destroy();
+    try {
+      await socket.close();
+      socket.destroy();
+    } catch (e) {
+      //Do Nothing
+    }
   }
 
   Uint8List _cutPaperCommand() {
