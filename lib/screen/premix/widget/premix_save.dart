@@ -1,5 +1,6 @@
 import 'package:ep_feedmill/animation/slide_right_route.dart';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
+import 'package:ep_feedmill/db/dao/premix_dao.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/screen/print_preview/print_preview_screen.dart';
@@ -22,7 +23,7 @@ class _SaveState extends State<Save> {
         onPressed: () {
           premixBloc.validate().then((r) {
             if (r) {
-              _confirmSave(premixBloc);
+              _confirmSave(context, premixBloc);
             }
           });
         },
@@ -33,7 +34,7 @@ class _SaveState extends State<Save> {
     );
   }
 
-  _confirmSave(PremixBloc premixBloc) {
+  _confirmSave(BuildContext mainContext, PremixBloc premixBloc) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -44,19 +45,21 @@ class _SaveState extends State<Save> {
           vcb: () async {
             final premixId = await premixBloc.savePremix();
             final printText = await PrintUtil().generatePremixReceipt(premixId);
-            _goPrintPreview(context, printText);
+            final barcodeText = (await PremixDao().getById(premixId)).uuid;
+            _goPrintPreview(mainContext, printText, barcodeText);
           },
         );
       },
     );
   }
 
-  _goPrintPreview(BuildContext ctx, String printText) async {
+  _goPrintPreview(
+      BuildContext ctx, String printText, String barcodeText) async {
     Navigator.of(ctx).pushReplacement(
       SlideRightRoute(
         widget: PrintPreviewScreen(
           printText: printText,
-          qrText: "TUTUTUTUT",
+          barcodeText: barcodeText,
         ),
       ),
     );

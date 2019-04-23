@@ -27,6 +27,13 @@ class SettingBloc extends BlocBase {
   }
 
   testPrint(String ip, int port) async {
-    NetworkPrinterDevice(ip, port).testPrint();
+    final printer = NetworkPrinterDevice(ip, port);
+
+    try {
+      await printer.testPrint();
+    } catch (e) {
+      _delegate.onDialogMessage(Strings.error, e.toString());
+      await printer.forceCloseSocket();
+    }
   }
 }

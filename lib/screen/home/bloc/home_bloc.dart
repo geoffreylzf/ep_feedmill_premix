@@ -57,11 +57,11 @@ class HomeBloc extends BlocBase {
 
   _init() async {
     _broilerCheckedSubject
-        .add(await SharedPreferencesModule().getBroilerCheck() ?? false);
+        .add(await SharedPreferencesModule().getBroilerCheck() ?? true);
     _breederCheckedSubject
-        .add(await SharedPreferencesModule().getBreederCheck() ?? false);
+        .add(await SharedPreferencesModule().getBreederCheck() ?? true);
     _swineCheckedSubject
-        .add(await SharedPreferencesModule().getSwineCheck() ?? false);
+        .add(await SharedPreferencesModule().getSwineCheck() ?? true);
 
     categorySqlStream.listen((sql) {
       _categoryFilterSql = sql;

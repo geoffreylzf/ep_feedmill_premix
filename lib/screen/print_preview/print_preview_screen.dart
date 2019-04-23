@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class PrintPreviewScreen extends StatefulWidget {
-  final String qrText;
+  final String barcodeText;
   final String printText;
 
-  PrintPreviewScreen({this.qrText, this.printText});
+  PrintPreviewScreen({this.barcodeText, this.printText});
 
   @override
   _PrintPreviewScreenState createState() => _PrintPreviewScreenState();
@@ -49,7 +49,7 @@ class _PrintPreviewScreenState extends State<PrintPreviewScreen>
           appBar: AppBar(
             title: Text(Strings.printPreview),
           ),
-          body: PrintPreviewBody(widget.qrText, widget.printText)),
+          body: PrintPreviewBody(widget.barcodeText, widget.printText)),
     );
   }
 }

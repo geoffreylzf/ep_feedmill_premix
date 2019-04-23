@@ -14,6 +14,7 @@ import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
 import 'package:ep_feedmill/screen/premix/premix_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vibrate/vibrate.dart';
 
 class PremixBloc extends BlocBase {
@@ -143,6 +144,7 @@ class PremixBloc extends BlocBase {
       mrfPremixPlanDocId: _mrfPremixPlanDocId,
       batchNo: _batchNo,
       groupNo: _groupNo,
+      uuid: Uuid().v1(),
       recipeName: plan.recipeName,
       docNo: plan.docNo,
       formulaCategoryId: plan.formulaCategoryId,

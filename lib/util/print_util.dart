@@ -39,7 +39,7 @@ class PrintUtil {
     s += _fmtLeftLine("Printed By : " + user.username);
     s += _fmtLeftLine("Date : " + DateTimeUtil().getCurrentDate());
     s += _fmtLeftLine("Time : " + DateTimeUtil().getCurrentTime());
-
+    s += _fmtLeftLine("UUID : " + premix.uuid);
     if(premix.isDeleted()){
       s += _fmtLeftLine("---Deleted---");
     }

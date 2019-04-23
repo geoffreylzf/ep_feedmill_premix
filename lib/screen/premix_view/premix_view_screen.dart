@@ -41,7 +41,9 @@ class _PremixViewScreenState extends State<PremixViewScreen> {
               onPressed: () async {
                 final printText =
                     await PrintUtil().generatePremixReceipt(widget.premixId);
-                _goPrintPreview(context, printText, "asas");
+                final barcodeText =
+                    (await PremixDao().getById(widget.premixId)).uuid;
+                _goPrintPreview(context, printText, barcodeText);
               },
             ),
             PopupMenuButton(
@@ -80,7 +82,7 @@ class _PremixViewScreenState extends State<PremixViewScreen> {
       SlideRightRoute(
         widget: PrintPreviewScreen(
           printText: printText,
-          qrText: qrText,
+          barcodeText: qrText,
         ),
       ),
     );

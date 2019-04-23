@@ -13,7 +13,7 @@ const oPremixDetailList = "premix_detail_list";*/
 
 class Premix {
   int id, mrfPremixPlanDocId, batchNo, groupNo, isUpload = 0, isDelete = 0;
-  String timestamp;
+  String uuid, timestamp;
   List<PremixDetail> premixDetailList = [];
 
   String recipeName, docNo;
@@ -24,6 +24,7 @@ class Premix {
     this.mrfPremixPlanDocId,
     this.batchNo,
     this.groupNo,
+    this.uuid,
     this.isUpload,
     this.isDelete,
     this.timestamp,
@@ -38,6 +39,7 @@ class Premix {
     @required this.mrfPremixPlanDocId,
     @required this.batchNo,
     @required this.groupNo,
+    @required this.uuid,
     @required this.recipeName,
     @required this.docNo,
     @required this.formulaCategoryId,
@@ -50,6 +52,7 @@ class Premix {
       mrfPremixPlanDocId: json["mrf_premix_plan_doc_id"],
       batchNo: json["batch_no"],
       groupNo: json["group_no"],
+      uuid: json["uuid"],
       isUpload: json["is_upload"],
       isDelete: json["is_delete"],
       timestamp: json["timestamp"],
@@ -69,6 +72,7 @@ class Premix {
         "mrf_premix_plan_doc_id": mrfPremixPlanDocId,
         "batch_no": batchNo,
         "group_no": groupNo,
+        "uuid": uuid,
         "is_upload": isUpload,
         "is_delete": isDelete,
         "timestamp": timestamp,
@@ -87,11 +91,11 @@ class Premix {
     return toJson()..remove("premix_detail_list");
   }
 
-  bool isDeleted(){
+  bool isDeleted() {
     return isDelete == 1;
   }
 
-  bool isUploaded(){
+  bool isUploaded() {
     return isUpload == 1;
   }
 }

@@ -24,9 +24,12 @@ class NetworkPrinterDevice {
   print(Uint8List byteData, String strText) async {
     socket = await Socket.connect(ip, port);
 
-    socket.add(byteData);
+    if (byteData != null) {
+      socket.add(byteData);
+      socket.write("\n\n\n");
+    }
+
     socket.write(strText);
-    Future.delayed(Duration(milliseconds: 500));
     socket.add(_cutPaperCommand());
 
     await socket.close();

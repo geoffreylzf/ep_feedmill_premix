@@ -37,7 +37,7 @@ class PrintPreviewBloc extends BlocBase {
     }
 
     try {
-      final byteData = await BarcodeModule().generateCode128Code("123");
+      final byteData = await BarcodeModule().generateCode128Code(codeText);
       await printer.print(byteData, strText);
     } catch (e) {
       _delegate.onDialogMessage(Strings.error, e.toString());

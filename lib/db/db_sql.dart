@@ -51,6 +51,7 @@ class DbSql {
       `mrf_premix_plan_doc_id` INTEGER,
       `batch_no` INTEGER,
       `group_no` INTEGER,
+      `uuid` TEXT,
       `recipe_name` TEXT,
       `doc_no` TEXT, 
       `formula_category_id` INTEGER,

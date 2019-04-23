@@ -14,10 +14,10 @@ class PremixHistoryBloc extends BlocBase {
   }
 
   PremixHistoryBloc() {
-    _loadPremixList();
+    loadPremixList();
   }
 
-  _loadPremixList() async {
+  loadPremixList() async {
     _premixListSubject.add(await PremixDao().getAll());
   }
 }

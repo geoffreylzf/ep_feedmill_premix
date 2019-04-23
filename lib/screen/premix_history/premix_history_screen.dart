@@ -43,6 +43,7 @@ class _HistoryListState extends State<HistoryList> {
   @override
   Widget build(BuildContext context) {
     final phBloc = BlocProvider.of<PremixHistoryBloc>(context);
+    phBloc.loadPremixList();
     return StreamBuilder<List<Premix>>(
         stream: phBloc.premixListStream,
         builder: (context, snapshot) {
