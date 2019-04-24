@@ -5,4 +5,5 @@ class Routes {
   static const setting = "setting";
   static const login = "login";
   static const premixHistory = "premixHistory";
+  static const upload = "upload";
 }

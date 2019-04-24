@@ -91,7 +91,7 @@ class HomeBloc extends BlocBase {
       _delegate.onDialogMessage(Strings.success,
           "Newest premix plan document successfully retrieve.");
     } catch (e) {
-      _delegate.onDialogMessage(Strings.success, e.toString());
+      _delegate.onDialogMessage(Strings.error, e.toString());
     } finally {
       await loadMrfPremixPlanDoc();
     }

@@ -5,9 +5,11 @@ import 'package:ep_feedmill/model/auth.dart';
 import 'package:ep_feedmill/model/table/item_packing.dart';
 import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/model/upload_body.dart';
+import 'package:ep_feedmill/model/upload_result.dart';
 import 'package:ep_feedmill/model/user.dart';
 import 'package:ep_feedmill/module/shared_preferences_module.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class ApiModule {
   static final _instance = ApiModule._internal();
@@ -22,6 +24,7 @@ class ApiModule {
 
   static const _loginModule = "apiMobileAuth/login";
   static const _housekeepingModule = "apiMobileFeedmill/getHouseKeeping";
+  static const _uploadModule = "apiMobileFeedmill/upload";
 
   bool isLocal = true;
 
@@ -32,7 +35,7 @@ class ApiModule {
     return _globalUrl + module;
   }
 
-  String validateResponse(Response response) {
+  String validateResponse(http.Response response) {
     if (response.statusCode == 200) {
       return response.body;
     }
@@ -43,8 +46,24 @@ class ApiModule {
       String username, String password, String email) async {
     String basicAuth = User(username, password).getCredential();
 
-    final response = await post(constructUrl(_loginModule),
+    final response = await http.post(constructUrl(_loginModule),
         headers: {'authorization': basicAuth}, body: {"email": email});
+
+    return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
+  }
+
+  Future<ApiResponse<UploadResult>> upload(UploadBody uploadBody) async {
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
+
+    final response = await http.post(
+      constructUrl(_uploadModule),
+      headers: {
+        'authorization': basicAuth,
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(uploadBody.toJson()),
+    );
 
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
@@ -53,7 +72,7 @@ class ApiModule {
     final user = await SharedPreferencesModule().getUser();
     String basicAuth = user.getCredential();
 
-    final response = await get(
+    final response = await http.get(
       constructUrl(_housekeepingModule) + "&type=item_packing",
       headers: {'authorization': basicAuth},
     );
@@ -64,7 +83,7 @@ class ApiModule {
     final user = await SharedPreferencesModule().getUser();
     String basicAuth = user.getCredential();
 
-    final response = await get(
+    final response = await http.get(
       constructUrl(_housekeepingModule) + "&type=mrf_formula_category",
       headers: {'authorization': basicAuth},
     );
@@ -75,7 +94,7 @@ class ApiModule {
     final user = await SharedPreferencesModule().getUser();
     String basicAuth = user.getCredential();
 
-    final response = await get(
+    final response = await http.get(
       constructUrl(_housekeepingModule) + "&type=mrf_premix_plan_doc",
       headers: {'authorization': basicAuth},
     );

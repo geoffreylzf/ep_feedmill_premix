@@ -43,6 +43,7 @@ class NavDrawerStart extends StatelessWidget {
             title: Text(Strings.upload),
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, Routes.upload);
             },
           ),
           Divider(),

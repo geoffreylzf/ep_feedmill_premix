@@ -13,6 +13,7 @@ class PremixDao {
 
   Future<int> insert(Premix premix) async {
     final db = await AppDb().database;
+    premix.setCurrentTimestamp();
     final res = await db.insert(_table, premix.toDbJson());
     return res;
   }
@@ -32,6 +33,16 @@ class PremixDao {
       whereArgs: [mrfPremixPlanDocId, batchNo, groupNo, isDelete],
     );
     return res.isNotEmpty ? Premix.fromJson(res.first) : null;
+  }
+
+  Future<List<Premix>> getByUpload({@required int isUpload}) async {
+    final db = await AppDb().database;
+    final res = await db.query(
+      _table,
+      where: """is_upload = ?""",
+      whereArgs: [isUpload],
+    );
+    return res.isNotEmpty ? res.map((c) => Premix.fromJson(c)).toList() : [];
   }
 
   Future<int> getCountByMrfPremixPlanDocIdGroupNo({

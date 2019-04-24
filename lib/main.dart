@@ -10,6 +10,7 @@ import 'package:ep_feedmill/screen/housekeeping/housekeeping_screen.dart';
 import 'package:ep_feedmill/screen/login/login_screen.dart';
 import 'package:ep_feedmill/screen/premix_history/premix_history_screen.dart';
 import 'package:ep_feedmill/screen/setting/setting_screen.dart';
+import 'package:ep_feedmill/screen/upload/upload_screen.dart';
 import 'package:ep_feedmill/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -50,6 +51,7 @@ class App extends StatelessWidget {
           Routes.housekeeping: (context) => HousekeepingScreen(),
           Routes.setting: (context) => SettingScreen(),
           Routes.premixHistory: (context) => PremixHistoryScreen(),
+          Routes.upload: (context) => UploadScreen(),
         },
       ),
     );

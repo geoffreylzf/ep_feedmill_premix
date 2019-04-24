@@ -1,20 +1,18 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/res/string.dart';
-import 'package:ep_feedmill/screen/setting/setting_bloc.dart';
-import 'package:ep_feedmill/screen/setting/widget/setting_network_printer.dart';
-import 'package:ep_feedmill/screen/setting/widget/setting_group_selection.dart';
+import 'package:ep_feedmill/screen/upload/upload_bloc.dart';
+import 'package:ep_feedmill/screen/upload/widget/upload_status.dart';
 import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 
-class SettingScreen extends StatefulWidget {
+class UploadScreen extends StatefulWidget {
   @override
-  _SettingScreenState createState() => _SettingScreenState();
+  _UploadScreenState createState() => _UploadScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> implements SettingDelegate {
+class _UploadScreenState extends State<UploadScreen> implements UploadDelegate {
 
-  SettingBloc settingBloc;
-
+  UploadBloc uploadBloc;
 
   @override
   void onDialogMessage(String title, String message) {
@@ -32,31 +30,29 @@ class _SettingScreenState extends State<SettingScreen> implements SettingDelegat
   @override
   void initState() {
     super.initState();
-    settingBloc = SettingBloc(delegate: this);
+    uploadBloc = UploadBloc(delegate: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      bloc: settingBloc,
+      bloc: uploadBloc,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(Strings.setting),
+          title: Text(Strings.upload),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            children: <Widget>[
-              GroupSelection(),
-              SettingNetworkPrinter(),
-            ],
-          ),
+        body: Row(
+          children: <Widget>[
+            Expanded(child: Container()),
+            VerticalDivider(width: 0),
+            Expanded(child: UploadStatus()),
+          ],
         ),
       ),
     );
   }
 }
 
-abstract class SettingDelegate {
+abstract class UploadDelegate {
   void onDialogMessage(String title, String message);
 }

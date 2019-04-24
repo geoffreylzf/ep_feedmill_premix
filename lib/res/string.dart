@@ -54,7 +54,9 @@ class Strings {
   static const retrieveHousekeeping = "Retrieve Housekeeping";
   static const allowTare = "Allow Tare";
   static const allowAddon = "Allow Add On";
+  static const localConnectOfficeWifi = "Local (Connect Office Wi-Fi)";
 
+  static const msgPendingNotYetUploadData = "Pending not yet upload data";
   static const msgPleaseEnterUsername = "Please enter username";
   static const msgPleaseEnterPassword = "Please enter password";
   static const msgPleaseEnterIp = "Please enter IP Address";

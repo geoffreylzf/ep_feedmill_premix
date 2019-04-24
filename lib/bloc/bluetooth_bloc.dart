@@ -78,8 +78,7 @@ class BluetoothBloc extends BlocBase {
 
     _bluetooth.onRead().listen((data) {
       if (!_isDispose && _type == BluetoothType.Weighing) {
-        if (data.contains(_netWeight) && data.contains(_kg)) {
-          data = data.replaceAll(_netWeight, "");
+        if (data.contains(_kg)) {
           data = data.replaceAll(_kg, "");
           data = data.trim();
           _weighingResultSubject.add(data);

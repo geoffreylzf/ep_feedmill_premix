@@ -4,12 +4,12 @@ import 'package:ep_feedmill/screen/setting/setting_bloc.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
 import 'package:flutter/material.dart';
 
-class NetworkPrinterSetting extends StatefulWidget {
+class SettingNetworkPrinter extends StatefulWidget {
   @override
-  _NetworkPrinterSettingState createState() => _NetworkPrinterSettingState();
+  _SettingNetworkPrinterState createState() => _SettingNetworkPrinterState();
 }
 
-class _NetworkPrinterSettingState extends State<NetworkPrinterSetting> {
+class _SettingNetworkPrinterState extends State<SettingNetworkPrinter> {
   @override
   Widget build(BuildContext context) {
     return Card(

@@ -2,6 +2,7 @@ import 'package:ep_feedmill/model/auth.dart';
 import 'package:ep_feedmill/model/table/item_packing.dart';
 import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
+import 'package:ep_feedmill/model/upload_result.dart';
 
 class ApiResponse<T> {
   final int cod;
@@ -11,17 +12,18 @@ class ApiResponse<T> {
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) {
     var result;
-
     if (T == Auth) {
       result = Auth.fromJson(json['result']);
+    } else if (T == UploadResult) {
+      result = UploadResult.fromJson(json['result']);
     } else if (T.toString() == "List<ItemPacking>") {
-      result = new List<ItemPacking>.from(
+      result = List<ItemPacking>.from(
           json["result"].map((x) => ItemPacking.fromJson(x)));
     } else if (T.toString() == "List<MrfPremixPlanDoc>") {
-      result = new List<MrfPremixPlanDoc>.from(
+      result = List<MrfPremixPlanDoc>.from(
           json["result"].map((x) => MrfPremixPlanDoc.fromJson(x)));
     } else if (T.toString() == "List<MrfFormulaCategory>") {
-      result = new List<MrfFormulaCategory>.from(
+      result = List<MrfFormulaCategory>.from(
           json["result"].map((x) => MrfFormulaCategory.fromJson(x)));
     }
 

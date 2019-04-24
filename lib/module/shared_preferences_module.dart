@@ -136,4 +136,14 @@ class SharedPreferencesModule {
     final prefs = await sp;
     return prefs.getBool(Keys.swineChecked);
   }
+
+  saveLocalCheck(bool b) async {
+    final prefs = await sp;
+    await prefs.setBool(Keys.localChecked, b);
+  }
+
+  Future<bool> getLocalCheck() async {
+    final prefs = await sp;
+    return prefs.getBool(Keys.localChecked);
+  }
 }

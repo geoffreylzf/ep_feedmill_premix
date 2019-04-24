@@ -1,3 +1,4 @@
+import 'package:ep_feedmill/db/dao/premix_detail_dao.dart';
 import 'package:ep_feedmill/model/table/premix_detail.dart';
 import 'package:ep_feedmill/util/date_time_util.dart';
 import 'package:flutter/widgets.dart';
@@ -87,8 +88,23 @@ class Premix {
       };
 
   Map<String, dynamic> toDbJson() {
-    timestamp = DateTimeUtil().getCurrentTimestamp();
     return toJson()..remove("premix_detail_list");
+  }
+
+  Map<String, dynamic> toUploadJson() {
+    return toJson()
+      ..remove("recipe_name")
+      ..remove("doc_no")
+      ..remove("formula_category_id")
+      ..remove("item_packing_id");
+  }
+
+  setCurrentTimestamp() {
+    timestamp = DateTimeUtil().getCurrentTimestamp();
+  }
+
+  loadDetailList() async {
+    premixDetailList = await PremixDetailDao().getByPremixId(id);
   }
 
   bool isDeleted() {
