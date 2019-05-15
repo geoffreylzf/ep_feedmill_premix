@@ -1,7 +1,10 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
-import 'package:ep_feedmill/bloc/login_bloc.dart';
+import 'package:ep_feedmill/bloc/local_bloc.dart';
+import 'package:ep_feedmill/screen/login/login_bloc.dart';
 import 'package:ep_feedmill/res/route.dart';
 import 'package:ep_feedmill/res/string.dart';
+import 'package:ep_feedmill/widget/local_check_box.dart';
+import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
@@ -10,9 +13,9 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    implements LoginDelegate {
+class _LoginScreenState extends State<LoginScreen> implements LoginDelegate {
   LoginBloc loginBloc;
+  LocalBloc localBloc = LocalBloc();
 
   @override
   void initState() {
@@ -30,33 +33,30 @@ class _LoginScreenState extends State<LoginScreen>
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(Strings.error),
-            content: Text(message),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(Strings.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
+          return SimpleAlertDialog(
+            title: Strings.error,
+            message: message,
           );
         });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<LoginBloc>(
-      bloc: loginBloc,
+    return BlocProviderTree(
+      blocProviders: [
+        BlocProvider<LoginBloc>(bloc: loginBloc),
+        BlocProvider<LocalBloc>(bloc: localBloc),
+      ],
       child: Scaffold(
         body: Center(
           child: Stack(
             children: [
               Positioned.fill(
-                  child: Opacity(
-                      opacity: 0.1,
-                      child: Image.asset('images/logo_ep_large.png'))),
+                child: Opacity(
+                  opacity: 0.1,
+                  child: Image.asset('images/logo_ep_large.png'),
+                ),
+              ),
               LoginForm(),
             ],
           ),
@@ -81,6 +81,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loginBloc = BlocProvider.of<LoginBloc>(context);
+    final localBloc = BlocProvider.of<LocalBloc>(context);
     return Form(
       key: _formKey,
       child: Container(
@@ -106,11 +107,9 @@ class _LoginFormState extends State<LoginForm> {
               child: PasswordFormField(_passwordController),
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: GoogleSignInBtn())),
+                LocalCheckBox(localBloc: localBloc),
                 RaisedButton(
                     child: Text(Strings.login.toUpperCase()),
                     onPressed: () {
@@ -121,6 +120,7 @@ class _LoginFormState extends State<LoginForm> {
                     }),
               ],
             ),
+            GoogleSignInBtn()
           ],
         ),
       ),

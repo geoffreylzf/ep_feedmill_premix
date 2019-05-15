@@ -27,7 +27,6 @@ class _PlanScreenState extends State<PlanScreen> implements PlanDelegate {
           return SimpleAlertDialog(
             title: title,
             message: message,
-            btnText: Strings.close.toUpperCase(),
           );
         });
   }

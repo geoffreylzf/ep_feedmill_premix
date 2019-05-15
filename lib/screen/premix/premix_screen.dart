@@ -82,7 +82,6 @@ class _PremixScreenState extends State<PremixScreen>
           return SimpleAlertDialog(
             title: Strings.error,
             message: message,
-            btnText: Strings.close.toUpperCase(),
           );
         });
   }

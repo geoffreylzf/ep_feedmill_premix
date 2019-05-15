@@ -7,6 +7,7 @@ import 'package:ep_feedmill/screen/premix_view/widget/pv_detail_list.dart';
 import 'package:ep_feedmill/screen/premix_view/widget/pv_premix_info.dart';
 import 'package:ep_feedmill/screen/print_preview/print_preview_screen.dart';
 import 'package:ep_feedmill/util/print_util.dart';
+import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:ep_feedmill/widget/simple_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -92,14 +93,21 @@ class _PremixViewScreenState extends State<PremixViewScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SimpleConfirmDialog(
-          title: "Delete?",
-          message: "This will delete the entered premix.",
-          btnPositiveText: Strings.delete,
-          vcb: () {
-            pvBloc.deletePremix();
-          },
-        );
+        if (pvBloc.getPremix().isUploaded()) {
+          return SimpleAlertDialog(
+            title: Strings.error,
+            message: "Uploaded data cannot be delete.",
+          );
+        } else {
+          return SimpleConfirmDialog(
+            title: "Delete?",
+            message: "This will delete the entered premix.",
+            btnPositiveText: Strings.delete,
+            vcb: () {
+              pvBloc.deletePremix();
+            },
+          );
+        }
       },
     );
   }

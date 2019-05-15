@@ -1,6 +1,8 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
+import 'package:ep_feedmill/bloc/local_bloc.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/housekeeping/housekeeping_bloc.dart';
+import 'package:ep_feedmill/widget/local_check_box.dart';
 import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:ep_feedmill/widget/simple_loading_dialog.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ class HousekeepingScreen extends StatefulWidget {
 class _HousekeepingScreenState extends State<HousekeepingScreen>
     implements HousekeepingDelegate {
   HousekeepingBloc hkBloc;
+  LocalBloc localBloc = LocalBloc();
 
   @override
   void onDialogMessage(String title, String message) {
@@ -22,7 +25,6 @@ class _HousekeepingScreenState extends State<HousekeepingScreen>
           return SimpleAlertDialog(
             title: title,
             message: message,
-            btnText: Strings.close.toUpperCase(),
           );
         });
   }
@@ -35,8 +37,11 @@ class _HousekeepingScreenState extends State<HousekeepingScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      bloc: hkBloc,
+    return BlocProviderTree(
+      blocProviders: [
+        BlocProvider<HousekeepingBloc>(bloc: hkBloc),
+        BlocProvider<LocalBloc>(bloc: localBloc),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: Text(Strings.houseKeeping),
@@ -128,12 +133,21 @@ class _ActionPanelState extends State<ActionPanel> {
   @override
   Widget build(BuildContext context) {
     final hkBloc = BlocProvider.of<HousekeepingBloc>(context);
-    return RaisedButton.icon(
-      onPressed: () {
-        hkBloc.retrieveAll();
-      },
-      icon: Icon(Icons.cloud_download),
-      label: Text(Strings.retrieveHousekeeping.toUpperCase()),
+    final localBloc = BlocProvider.of<LocalBloc>(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        LocalCheckBox(
+          localBloc: localBloc,
+        ),
+        RaisedButton.icon(
+          onPressed: () {
+            hkBloc.retrieveAll();
+          },
+          icon: Icon(Icons.cloud_download),
+          label: Text(Strings.retrieveHousekeeping.toUpperCase()),
+        ),
+      ],
     );
   }
 }

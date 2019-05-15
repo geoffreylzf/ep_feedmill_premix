@@ -1,8 +1,11 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
+import 'package:ep_feedmill/bloc/local_bloc.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/upload/upload_bloc.dart';
+import 'package:ep_feedmill/screen/upload/widget/upload_log.dart';
 import 'package:ep_feedmill/screen/upload/widget/upload_status.dart';
 import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
+import 'package:ep_feedmill/widget/simple_loading_dialog.dart';
 import 'package:flutter/material.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -11,8 +14,8 @@ class UploadScreen extends StatefulWidget {
 }
 
 class _UploadScreenState extends State<UploadScreen> implements UploadDelegate {
-
   UploadBloc uploadBloc;
+  LocalBloc localBloc = LocalBloc();
 
   @override
   void onDialogMessage(String title, String message) {
@@ -22,7 +25,6 @@ class _UploadScreenState extends State<UploadScreen> implements UploadDelegate {
           return SimpleAlertDialog(
             title: title,
             message: message,
-            btnText: Strings.close.toUpperCase(),
           );
         });
   }
@@ -35,17 +37,25 @@ class _UploadScreenState extends State<UploadScreen> implements UploadDelegate {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      bloc: uploadBloc,
+    return BlocProviderTree(
+      blocProviders: [
+        BlocProvider<UploadBloc>(bloc: uploadBloc),
+        BlocProvider<LocalBloc>(bloc: localBloc),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: Text(Strings.upload),
         ),
-        body: Row(
+        body: Stack(
           children: <Widget>[
-            Expanded(child: Container()),
-            VerticalDivider(width: 0),
-            Expanded(child: UploadStatus()),
+            Row(
+              children: <Widget>[
+                Expanded(child: UploadLog()),
+                VerticalDivider(width: 0),
+                Expanded(child: UploadStatus()),
+              ],
+            ),
+            SimpleLoadingDialog(uploadBloc.isLoadingStream),
           ],
         ),
       ),

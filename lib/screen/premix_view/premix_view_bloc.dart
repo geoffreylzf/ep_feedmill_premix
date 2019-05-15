@@ -49,4 +49,8 @@ class PremixViewBloc extends BlocBase {
     await PremixDao().update(premix);
     await _loadPremix();
   }
+
+  PremixWithInfo getPremix(){
+    return _premixSubject.value;
+  }
 }

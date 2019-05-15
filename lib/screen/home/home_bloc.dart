@@ -2,6 +2,7 @@ import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_detail_dao.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
 import 'package:ep_feedmill/db/dao/premix_dao.dart';
+import 'package:ep_feedmill/db/dao/util_dao.dart';
 import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
 import 'package:ep_feedmill/module/api_module.dart';
@@ -19,6 +20,8 @@ class HomeBloc extends BlocBase {
   final _breederCheckedSubject = BehaviorSubject<bool>();
   final _swineCheckedSubject = BehaviorSubject<bool>();
 
+  final _noUploadCountSubject = BehaviorSubject<int>();
+
   Stream<List<MrfPremixPlanDocWithInfo>> get mrfPremixPlanDocListStream =>
       _mrfPremixPlanDocListSubject.stream;
 
@@ -27,6 +30,8 @@ class HomeBloc extends BlocBase {
   Stream<bool> get breederCheckedStream => _breederCheckedSubject.stream;
 
   Stream<bool> get swineCheckedStream => _swineCheckedSubject.stream;
+
+  Stream<int> get noUploadCountStream => _noUploadCountSubject.stream;
 
   Stream<String> get categorySqlStream => Observable.combineLatest3(
           broilerCheckedStream, breederCheckedStream, swineCheckedStream,
@@ -38,12 +43,15 @@ class HomeBloc extends BlocBase {
         );
       });
 
+
+
   @override
   void dispose() {
     _mrfPremixPlanDocListSubject.close();
     _broilerCheckedSubject.close();
     _breederCheckedSubject.close();
     _swineCheckedSubject.close();
+    _noUploadCountSubject.close();
   }
 
   String _categoryFilterSql;
@@ -67,12 +75,18 @@ class HomeBloc extends BlocBase {
       _categoryFilterSql = sql;
       loadMrfPremixPlanDoc();
     });
+
+    await loadNoUploadCount();
   }
 
   loadMrfPremixPlanDoc() async {
     final groupNo = await SharedPreferencesModule().getGroupNo();
     _mrfPremixPlanDocListSubject.add(await MrfPremixPlanDocDao()
         .getAllWithInfo(_categoryFilterSql, groupNo));
+  }
+
+  loadNoUploadCount() async {
+    _noUploadCountSubject.add(await UtilDao().getNoUploadCount());
   }
 
   retrieveCurrentMrfPremixPlan() async {

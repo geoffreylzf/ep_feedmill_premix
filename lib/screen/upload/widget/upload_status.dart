@@ -1,6 +1,8 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
+import 'package:ep_feedmill/bloc/local_bloc.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/upload/upload_bloc.dart';
+import 'package:ep_feedmill/widget/local_check_box.dart';
 import 'package:flutter/material.dart';
 
 class UploadStatus extends StatefulWidget {
@@ -12,6 +14,7 @@ class _UploadStatusState extends State<UploadStatus> {
   @override
   Widget build(BuildContext context) {
     final uploadBloc = BlocProvider.of<UploadBloc>(context);
+    final localBloc = BlocProvider.of<LocalBloc>(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -37,22 +40,8 @@ class _UploadStatusState extends State<UploadStatus> {
             label: Text(Strings.upload.toUpperCase())),
         Expanded(
           flex: 3,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              StreamBuilder<bool>(
-                  stream: uploadBloc.localCheckedStream,
-                  initialData: false,
-                  builder: (context, snapshot) {
-                    return Checkbox(
-                      value: snapshot.data,
-                      onChanged: (bool b) {
-                        uploadBloc.setLocalChecked(b);
-                      },
-                    );
-                  }),
-              Text(Strings.localConnectOfficeWifi),
-            ],
+          child: LocalCheckBox(
+            localBloc: localBloc,
           ),
         ),
       ],

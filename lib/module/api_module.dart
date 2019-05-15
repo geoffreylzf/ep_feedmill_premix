@@ -26,9 +26,8 @@ class ApiModule {
   static const _housekeepingModule = "apiMobileFeedmill/getHouseKeeping";
   static const _uploadModule = "apiMobileFeedmill/upload";
 
-  bool isLocal = true;
-
-  String constructUrl(String module) {
+  Future<String> constructUrl(String module) async {
+    final isLocal = await SharedPreferencesModule().getLocalCheck() ?? false;
     if (isLocal) {
       return _localUrl + module;
     }
@@ -46,8 +45,11 @@ class ApiModule {
       String username, String password, String email) async {
     String basicAuth = User(username, password).getCredential();
 
-    final response = await http.post(constructUrl(_loginModule),
-        headers: {'authorization': basicAuth}, body: {"email": email});
+    final response = await http.post(
+      await constructUrl(_loginModule),
+      headers: {'authorization': basicAuth},
+      body: {"email": email},
+    );
 
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
@@ -57,7 +59,7 @@ class ApiModule {
     String basicAuth = user.getCredential();
 
     final response = await http.post(
-      constructUrl(_uploadModule),
+      await constructUrl(_uploadModule),
       headers: {
         'authorization': basicAuth,
         "Content-Type": "application/json",
@@ -73,7 +75,7 @@ class ApiModule {
     String basicAuth = user.getCredential();
 
     final response = await http.get(
-      constructUrl(_housekeepingModule) + "&type=item_packing",
+      await constructUrl(_housekeepingModule) + "&type=item_packing",
       headers: {'authorization': basicAuth},
     );
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
@@ -84,7 +86,7 @@ class ApiModule {
     String basicAuth = user.getCredential();
 
     final response = await http.get(
-      constructUrl(_housekeepingModule) + "&type=mrf_formula_category",
+      await constructUrl(_housekeepingModule) + "&type=mrf_formula_category",
       headers: {'authorization': basicAuth},
     );
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
@@ -95,7 +97,7 @@ class ApiModule {
     String basicAuth = user.getCredential();
 
     final response = await http.get(
-      constructUrl(_housekeepingModule) + "&type=mrf_premix_plan_doc",
+      await constructUrl(_housekeepingModule) + "&type=mrf_premix_plan_doc",
       headers: {'authorization': basicAuth},
     );
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));

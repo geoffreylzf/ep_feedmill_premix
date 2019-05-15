@@ -72,4 +72,12 @@ class DbSql {
       `net_weight` REAL,
       `is_bt` INTEGER);
       """;
+
+  static final createLogTable = """
+      CREATE TABLE `log` (
+      `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+      `task` TEXT,
+      `remark` TEXT,
+      `timestamp` TIMESTAMP);
+      """;
 }

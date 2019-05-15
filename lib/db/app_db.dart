@@ -36,6 +36,8 @@ class AppDb {
         await db.execute(DbSql.createTempPremixDetailTable);
         await db.execute(DbSql.createPremixTable);
         await db.execute(DbSql.createPremixDetailTable);
+
+        await db.execute(DbSql.createLogTable);
       },
     );
   }

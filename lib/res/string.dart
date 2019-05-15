@@ -2,6 +2,7 @@ class Strings {
   static const appName = "Eng Peng Feedmill";
   static const houseKeeping = "Housekeeping";
   static const upload = "Upload";
+  static const pendingUpload = "Pending Upload";
   static const premixPlanBatch = "Premix Plan Batch";
   static const premixHistory = "Premix History";
   static const premixView = "Premix View";

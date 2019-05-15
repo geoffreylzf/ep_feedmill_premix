@@ -22,6 +22,7 @@ class _PremixInfoState extends State<PremixInfo> {
             var skuCode = "";
             var skuName = "";
             var timestamp = "";
+            var isUpload = false;
 
             if (snapshot.hasData) {
               final premix = snapshot.data;
@@ -29,6 +30,7 @@ class _PremixInfoState extends State<PremixInfo> {
               skuCode = premix.skuCode;
               skuName = premix.skuName;
               timestamp = premix.timestamp;
+              isUpload = premix.isUploaded();
             }
 
             return Row(
@@ -46,8 +48,8 @@ class _PremixInfoState extends State<PremixInfo> {
                     children: <Widget>[
                       Text(
                         skuName,
-                        style:
-                        TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900, fontSize: 16),
                       ),
                       Text(skuCode, style: TextStyle(fontSize: 12)),
                       Text(docNo, style: TextStyle(fontSize: 12)),
@@ -55,21 +57,24 @@ class _PremixInfoState extends State<PremixInfo> {
                         children: <Widget>[
                           Icon(Icons.access_time, size: 16),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child:
-                            Text(timestamp, style: TextStyle(fontSize: 12)),
+                                Text(timestamp, style: TextStyle(fontSize: 12)),
                           )
                         ],
                       )
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Icon(
-                    Icons.cloud_upload,
-                  ),
-                )
+                isUpload
+                    ? Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Icon(
+                          Icons.cloud_upload,
+                        ),
+                      )
+                    : Container(),
               ],
             );
           }),

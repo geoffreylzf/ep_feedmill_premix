@@ -24,7 +24,6 @@ class _SettingScreenState extends State<SettingScreen> implements SettingDelegat
           return SimpleAlertDialog(
             title: title,
             message: message,
-            btnText: Strings.close.toUpperCase(),
           );
         });
   }

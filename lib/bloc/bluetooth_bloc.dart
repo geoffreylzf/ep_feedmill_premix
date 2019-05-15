@@ -6,8 +6,8 @@ import 'package:ep_feedmill/module/shared_preferences_module.dart';
 import 'package:rxdart/subjects.dart';
 
 /*const _grossWeight = "G.W.:";
-const _tareWeight = "T.W.:";*/
-const _netWeight = "N.W.:";
+const _tareWeight = "T.W.:";
+const _netWeight = "N.W.:";*/
 const _kg = "kg";
 
 class BluetoothBloc extends BlocBase {
@@ -51,7 +51,7 @@ class BluetoothBloc extends BlocBase {
       _isBluetoothEnabledSubject.add(true);
     }
 
-    await getDevices();
+    await loadDevices();
 
     _bluetooth.onStatusChanged().listen((btStatus) {
       if (!_isDispose) {
@@ -101,7 +101,7 @@ class BluetoothBloc extends BlocBase {
     }
   }
 
-  getDevices() async {
+  loadDevices() async {
     List<BluetoothDevice> devices = await _bluetooth.getPairedDevices();
     _devicesSubject.sink.add(devices);
   }

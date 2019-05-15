@@ -1,3 +1,4 @@
+import 'package:ep_feedmill/res/string.dart';
 import 'package:flutter/material.dart';
 
 class SimpleAlertDialog extends StatelessWidget {
@@ -6,7 +7,7 @@ class SimpleAlertDialog extends StatelessWidget {
   SimpleAlertDialog({
     @required this.title,
     @required this.message,
-    @required this.btnText,
+    this.btnText: Strings.close,
   });
 
   @override
@@ -16,7 +17,7 @@ class SimpleAlertDialog extends StatelessWidget {
       content: Text(message),
       actions: <Widget>[
         FlatButton(
-          child: Text(btnText),
+          child: Text(btnText.toUpperCase()),
           onPressed: () {
             Navigator.of(context).pop();
           },

@@ -1,6 +1,6 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/res/string.dart';
-import 'package:ep_feedmill/screen/home/bloc/home_bloc.dart';
+import 'package:ep_feedmill/screen/home/home_bloc.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

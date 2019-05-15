@@ -236,6 +236,7 @@ class _BluetoothPanelState extends State<BluetoothPanel> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
+          bluetoothBloc.loadDevices();
           return AlertDialog(
             title: const Text(Strings.bluetoothDevices),
             content: Container(

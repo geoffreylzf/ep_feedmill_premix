@@ -36,7 +36,6 @@ class _PrintPreviewScreenState extends State<PrintPreviewScreen>
           return SimpleAlertDialog(
             title: title,
             message: message,
-            btnText: Strings.close.toUpperCase(),
           );
         });
   }

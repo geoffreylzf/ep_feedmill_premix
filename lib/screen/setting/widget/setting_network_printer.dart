@@ -47,8 +47,8 @@ class _NetworkSettingFormState extends State<NetworkSettingForm> {
     super.initState();
     _settingBloc = BlocProvider.of<SettingBloc>(context);
     _settingBloc.getNetworkPrinter().then((device) {
-      _ipController.text = device.ip;
-      _portController.text = device.port.toString();
+      _ipController.text = device?.ip ?? "";
+      _portController.text = device?.port?.toString() ?? "";
     });
   }
 

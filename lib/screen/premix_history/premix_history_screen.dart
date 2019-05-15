@@ -2,7 +2,7 @@ import 'package:ep_feedmill/animation/slide_right_route.dart';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/model/table/premix.dart';
 import 'package:ep_feedmill/res/string.dart';
-import 'package:ep_feedmill/screen/premix_history/bloc/premix_history_bloc.dart';
+import 'package:ep_feedmill/screen/premix_history/premix_history_bloc.dart';
 import 'package:ep_feedmill/screen/premix_view/premix_view_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -64,9 +64,32 @@ class _HistoryListState extends State<HistoryList> {
                     Text(Strings.group + " : " + premix.groupNo.toString()),
                   ],
                 ),
-                title: Text(premix.recipeName +
-                    (premix.isDeleted() ? " (Deleted)" : "")),
-                subtitle: Text(premix.docNo),
+                title: Row(
+                  children: <Widget>[
+                    Text(premix.recipeName),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child:
+                          premix.isDeleted() ? Icon(Icons.delete) : Container(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: premix.isUploaded()
+                          ? Icon(Icons.cloud_upload)
+                          : Container(),
+                    ),
+                  ],
+                ),
+                subtitle: Row(
+                  children: <Widget>[
+                    Text(premix.docNo),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.access_time, size: 16),
+                    ),
+                    Text(premix.timestamp),
+                  ],
+                ),
                 onTap: () async {
                   await Future.delayed(Duration(milliseconds: 100));
                   Navigator.push(
