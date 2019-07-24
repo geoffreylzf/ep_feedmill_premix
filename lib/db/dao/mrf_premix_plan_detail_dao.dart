@@ -20,9 +20,7 @@ class MrfPremixPlanDetailDao {
   Future<List<MrfPremixPlanDetail>> getAll() async {
     var db = await AppDb().database;
     var res = await db.query(_table);
-    return res.isNotEmpty
-        ? res.map((c) => MrfPremixPlanDetail.fromJson(c)).toList()
-        : [];
+    return res.isNotEmpty ? res.map((c) => MrfPremixPlanDetail.fromJson(c)).toList() : [];
   }
 
   Future<int> deleteAll() async {
@@ -30,9 +28,8 @@ class MrfPremixPlanDetailDao {
     return await db.delete(_table);
   }
 
-  Future<List<MrfPremixPlanDetailWithInfo>>
-      getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
-          {@required int mrfPremixPlanDocId, @required int groupNo}) async {
+  Future<List<MrfPremixPlanDetailWithInfo>> getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
+      {@required int mrfPremixPlanDocId, @required int groupNo}) async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT 
@@ -46,16 +43,13 @@ class MrfPremixPlanDetailDao {
     AND group_no = ?
     AND item_packing.id NOT in (SELECT item_packing_id FROM temp_premix_detail)
     """, [mrfPremixPlanDocId, groupNo]);
-    return res.isNotEmpty
-        ? res.map((c) => MrfPremixPlanDetailWithInfo.fromJson(c)).toList()
-        : [];
+    return res.isNotEmpty ? res.map((c) => MrfPremixPlanDetailWithInfo.fromJson(c)).toList() : [];
   }
 
-  Future<MrfPremixPlanDetailWithInfo>
-      getByMrfPremixPlanDocIdGroupNoItemPackingId(
-          {@required int mrfPremixPlanDocId,
-          @required int groupNo,
-          @required int itemPackingId}) async {
+  Future<MrfPremixPlanDetailWithInfo> getByMrfPremixPlanDocIdGroupNoItemPackingId(
+      {@required int mrfPremixPlanDocId,
+      @required int groupNo,
+      @required int itemPackingId}) async {
     var db = await AppDb().database;
     var res = await db.rawQuery("""
     SELECT 
@@ -69,9 +63,22 @@ class MrfPremixPlanDetailDao {
     AND group_no = ? 
     AND item_packing.id = ?
     """, [mrfPremixPlanDocId, groupNo, itemPackingId]);
-    return res.isNotEmpty
-        ? MrfPremixPlanDetailWithInfo.fromJson(res.first)
-        : null;
+    return res.isNotEmpty ? MrfPremixPlanDetailWithInfo.fromJson(res.first) : null;
+  }
+
+  Future<int> getMinSequence(
+      {@required int mrfPremixPlanDocId,
+        @required int groupNo,}) async {
+    var db = await AppDb().database;
+    var res = await db.rawQuery("""
+    SELECT 
+    MIN(mrf_premix_plan_detail.sequence) AS sequence
+    FROM mrf_premix_plan_detail
+    WHERE mrf_premix_plan_doc_id = ?
+    AND group_no = ? 
+    AND item_packing_id NOT IN (SELECT item_packing_id FROM temp_premix_detail)
+    """, [mrfPremixPlanDocId, groupNo]);
+    return res.isNotEmpty ? res.first['sequence'] : null;
   }
 
   Future<int> getCountOfNotExistIngredient({
@@ -100,6 +107,7 @@ class MrfPremixPlanDetailWithInfo extends MrfPremixPlanDetail {
     id,
     mrfPremixPlanDocId,
     groupNo,
+    sequence,
     itemPackingId,
     formulaWeight,
     this.skuName,
@@ -108,6 +116,7 @@ class MrfPremixPlanDetailWithInfo extends MrfPremixPlanDetail {
           id: id,
           mrfPremixPlanDocId: mrfPremixPlanDocId,
           groupNo: groupNo,
+          sequence: sequence,
           itemPackingId: itemPackingId,
           formulaWeight: formulaWeight,
         );
@@ -117,6 +126,7 @@ class MrfPremixPlanDetailWithInfo extends MrfPremixPlanDetail {
         id: json["id"],
         mrfPremixPlanDocId: json["mrf_premix_plan_doc_id"],
         groupNo: json["group_no"],
+        sequence: json["sequence"],
         itemPackingId: json["item_packing_id"],
         formulaWeight: json["formula_weight"] is int
             ? (json["formula_weight"] as int).toDouble()

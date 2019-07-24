@@ -73,6 +73,7 @@ class _NetworkSettingFormState extends State<NetworkSettingForm> {
                     if (value.isEmpty) {
                       return Strings.msgPleaseEnterIp;
                     }
+                    return null;
                   },
                 ),
               ),
@@ -91,6 +92,7 @@ class _NetworkSettingFormState extends State<NetworkSettingForm> {
                       if (value.isEmpty) {
                         return Strings.msgPleaseEnterPort;
                       }
+                      return null;
                     },
                   ),
                 ),
@@ -106,8 +108,7 @@ class _NetworkSettingFormState extends State<NetworkSettingForm> {
                   icon: Icon(Icons.print),
                   label: Text(Strings.testPrint.toUpperCase()),
                   onPressed: () {
-                    _settingBloc.testPrint(
-                        _ipController.text, int.tryParse(_portController.text));
+                    _settingBloc.testPrint(_ipController.text, int.tryParse(_portController.text));
                   },
                 ),
                 Padding(
@@ -117,8 +118,8 @@ class _NetworkSettingFormState extends State<NetworkSettingForm> {
                     label: Text(Strings.save.toUpperCase()),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        _settingBloc.saveNetworkPrinter(_ipController.text,
-                            int.tryParse(_portController.text));
+                        _settingBloc.saveNetworkPrinter(
+                            _ipController.text, int.tryParse(_portController.text));
                       }
                     },
                   ),

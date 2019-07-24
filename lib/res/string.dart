@@ -21,6 +21,7 @@ class Strings {
   static const weightKg = "Weight (Kg)";
   static const password = "Password";
   static const save = "Save";
+  static const turnOn = "Turn On";
   static const testPrint = "Test Print";
   static const back = "Back";
   static const cancel = "Cancel";
@@ -54,7 +55,7 @@ class Strings {
   static const formulaCategory = "Formula Catgory";
   static const retrieveHousekeeping = "Retrieve Housekeeping";
   static const allowTare = "Allow Tare";
-  static const allowAddon = "Allow Add On";
+  static const allowAddon = "Additional";
   static const localConnectOfficeWifi = "Local (Connect Office Wi-Fi)";
 
   static const msgPendingNotYetUploadData = "Pending not yet upload data";

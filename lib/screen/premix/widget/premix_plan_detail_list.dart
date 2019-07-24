@@ -26,50 +26,63 @@ class _PlanDetailListState extends State<PlanDetailList> {
           return ListView.builder(
             itemCount: list.length,
             itemBuilder: (context, position) => ExpansionTile(
-                  key: PageStorageKey(list[position].id.toString()),
-                  leading: Icon(Icons.landscape),
-                  title: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(list[position].skuName)),
-                      Text(
-                          "${list[position].formulaWeight.toStringAsFixed(2)} Kg"),
-                    ],
-                  ),
-                  children: [
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(Strings.skuCode,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey)),
-                                Text(
-                                  list[position].skuCode,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: RaisedButton.icon(
-                            icon: Icon(FontAwesomeIcons.weight),
-                            onPressed: () {
-                              scanBloc.manualSelectItemPacking(
-                                  list[position].itemPackingId);
-                            },
-                            label: Text("Enter Weight"),
-                          ),
-                        )
-                      ],
+              key: PageStorageKey(list[position].id.toString()),
+              leading: Icon(Icons.landscape),
+              title: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: new BoxDecoration(
+                      color: Colors.grey,
+                      shape: BoxShape.circle,
                     ),
+                    child: Center(
+                        child: Text(
+                      list[position].sequence.toString(),
+                      style: TextStyle(color: Colors.white),
+                    )),
+                  ),
+                  Expanded(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(list[position].skuName),
+                  )),
+                  Text("${list[position].formulaWeight.toStringAsFixed(2)} Kg"),
+                ],
+              ),
+              children: [
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(Strings.skuCode,
+                                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text(
+                              list[position].skuCode,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: RaisedButton.icon(
+                        icon: Icon(FontAwesomeIcons.weight),
+                        onPressed: () {
+                          scanBloc.manualSelectItemPacking(list[position].itemPackingId);
+                        },
+                        label: Text("Enter Weight"),
+                      ),
+                    )
                   ],
                 ),
+              ],
+            ),
           );
         });
   }

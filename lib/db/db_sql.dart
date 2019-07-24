@@ -30,6 +30,7 @@ class DbSql {
       `id` INTEGER PRIMARY KEY,
       `mrf_premix_plan_doc_id` INTEGER,
       `group_no` INTEGER,
+      `sequence` INTEGER,
       `item_packing_id` INTEGER,
       `formula_weight` REAL);
       """;

@@ -44,7 +44,7 @@ class _PremixScreenState extends State<PremixScreen>
       delegate: this,
       mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
     );
-    tempBloc = PremixTempBloc();
+    tempBloc = PremixTempBloc(mrfPremixPlanDocId: widget.mrfPremixPlanDocId);
     weighingBloc = PremixWeighingBloc(
       tempBloc: tempBloc,
       bluetoothBloc: bluetoothBloc,

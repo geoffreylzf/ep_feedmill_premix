@@ -5,6 +5,7 @@ import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
+import 'package:ep_feedmill/widget/simple_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
 class Weighing extends StatefulWidget {
@@ -73,11 +74,9 @@ class _WeighingState extends State<Weighing> {
                       return TextFormField(
                         enabled: !isBt,
                         controller: weightController,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: Strings.weightKg),
+                            border: OutlineInputBorder(), labelText: Strings.weightKg),
                       );
                     }),
               ),
@@ -98,8 +97,7 @@ class _WeighingState extends State<Weighing> {
             child: RaisedButton.icon(
               onPressed: () {
                 premixBloc
-                    .insertTempPremixDetail(
-                        double.tryParse(weightController.text))
+                    .insertTempPremixDetail(double.tryParse(weightController.text))
                     .then((success) {
                   if (success) {
                     weightController.text = "";
@@ -143,7 +141,23 @@ class _WeighingState extends State<Weighing> {
                       return Checkbox(
                         value: snapshot.data,
                         onChanged: (bool b) {
-                          scanBloc.setIsAllowAddon(b);
+                          if (b) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SimpleConfirmDialog(
+                                  title: "Turn On Additional?",
+                                  message: "Are you sure?",
+                                  btnPositiveText: Strings.turnOn,
+                                  vcb: () async {
+                                    scanBloc.setIsAllowAddon(b);
+                                  },
+                                );
+                              },
+                            );
+                          } else {
+                            scanBloc.setIsAllowAddon(b);
+                          }
                         },
                       );
                     }),
@@ -177,9 +191,8 @@ class _BluetoothPanelState extends State<BluetoothPanel> {
                 return IconButton(
                   icon: Icon(Icons.bluetooth),
                   iconSize: 48,
-                  onPressed: snapshot.data
-                      ? () => showBluetoothDevices(context, bluetoothBloc)
-                      : null,
+                  onPressed:
+                      snapshot.data ? () => showBluetoothDevices(context, bluetoothBloc) : null,
                   color: Theme.of(context).primaryColor,
                   splashColor: Theme.of(context).accentColor,
                 );
@@ -206,8 +219,7 @@ class _BluetoothPanelState extends State<BluetoothPanel> {
                 StreamBuilder<String>(
                     stream: bluetoothBloc.addressStream,
                     builder: (context, snapshot) {
-                      return Text(
-                          "${Strings.address} : ${(snapshot.data ?? "")}",
+                      return Text("${Strings.address} : ${(snapshot.data ?? "")}",
                           style: TextStyle(fontSize: 12));
                     }),
               ],
@@ -220,9 +232,7 @@ class _BluetoothPanelState extends State<BluetoothPanel> {
                 return IconButton(
                   icon: Icon(Icons.refresh),
                   iconSize: 48,
-                  onPressed: snapshot.data
-                      ? () => bluetoothBloc.connectDevice()
-                      : null,
+                  onPressed: snapshot.data ? () => bluetoothBloc.connectDevice() : null,
                   color: Theme.of(context).primaryColor,
                   splashColor: Theme.of(context).accentColor,
                 );
@@ -247,8 +257,7 @@ class _BluetoothPanelState extends State<BluetoothPanel> {
                   builder: (context, snapshot) {
                     if (snapshot.data == null || snapshot.data.isEmpty) {
                       return Center(
-                          child: Text('Empty',
-                              style: Theme.of(context).textTheme.display1));
+                          child: Text('Empty', style: Theme.of(context).textTheme.display1));
                     }
 
                     return ListView.builder(

@@ -46,81 +46,88 @@ class _TempPremixDetailListState extends State<TempPremixDetailList> {
         var list = snapshot.data;
         return ListView.builder(
           itemCount: list.length,
-          itemBuilder: (context, position) => Dismissible(
-                key: PageStorageKey(list[position].id.toString()),
-                onDismissed: (direction) {
-                  premixBloc.deleteTempPremixDetail(list[position].id);
-                },
-                confirmDismiss: (direction) async {
-                  return position == 0;
-                },
-                background: Container(
-                  color: Colors.red,
-                  child: Icon(Icons.clear),
-                ),
-                child: ExpansionTile(
-                  key: PageStorageKey(list[position].id.toString()),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text("${list.length - position}"),
-                      ),
-                      Flexible(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            list[position].skuName,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "${list[position].netWeight.toStringAsFixed(2)} Kg",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    ],
+          itemBuilder: (context, position) => ExpansionTile(
+            key: PageStorageKey(list[position].id.toString()),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: new BoxDecoration(
+                      color: Colors.grey,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                        child: Text(
+                      list[position].sequence.toString(),
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    )),
                   ),
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(Strings.skuCode,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey)),
-                              Text(
-                                list[position].skuCode,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              SmallText("GW", list[position].grossWeight),
-                              SmallText("TW", list[position].tareWeight),
-                              SmallText("NW", list[position].netWeight),
-                            ],
-                          ),
-                        ],
+                ),
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      list[position].skuName,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "${(list[position].netWeight ?? 0).toStringAsFixed(2)} Kg",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(Strings.skuCode, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(
+                          list[position].skuCode,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        RaisedButton.icon(
+                          onPressed: () {
+                            premixBloc.deleteTempPremixDetail(list[position].id);
+                          },
+                          icon: Icon(Icons.delete),
+                          label: Text(
+                            Strings.delete.toUpperCase(),
+                          ),
+                          color: Colors.red,
+                        )
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        SmallText("GW", list[position].grossWeight),
+                        SmallText("TW", list[position].tareWeight),
+                        SmallText("NW", list[position].netWeight),
+                      ],
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
         );
       },
     );
@@ -136,7 +143,7 @@ class SmallText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      "$label : ${weight.toStringAsFixed(2).padLeft(7)}",
+      "$label : ${(weight ?? 0).toStringAsFixed(2).padLeft(7)}",
       style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,

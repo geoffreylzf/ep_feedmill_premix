@@ -19,8 +19,7 @@ import 'package:vibrate/vibrate.dart';
 
 class PremixBloc extends BlocBase {
   final _planDocSubject = BehaviorSubject<MrfPremixPlanDocWithInfo>();
-  final _planDetailWithInfoListSubject =
-      BehaviorSubject<List<MrfPremixPlanDetailWithInfo>>();
+  final _planDetailWithInfoListSubject = BehaviorSubject<List<MrfPremixPlanDetailWithInfo>>();
 
   Stream<MrfPremixPlanDocWithInfo> get planDocStream => _planDocSubject.stream;
 
@@ -72,14 +71,12 @@ class PremixBloc extends BlocBase {
   }
 
   _loadPlanDoc() async {
-    final doc =
-        await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
+    final doc = await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
     _planDocSubject.add(doc);
   }
 
   _loadPlanDetailWithInfoList() async {
-    final list = await MrfPremixPlanDetailDao()
-        .getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
+    final list = await MrfPremixPlanDetailDao().getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
       mrfPremixPlanDocId: _mrfPremixPlanDocId,
       groupNo: _groupNo,
     );
@@ -109,8 +106,7 @@ class PremixBloc extends BlocBase {
     } else {
       grossWeight = weight;
       tareWeight = lastItemPacking.grossWeight;
-      netWeight = double.tryParse(
-          (weight - lastItemPacking.grossWeight).toStringAsFixed(2));
+      netWeight = double.tryParse((weight - lastItemPacking.grossWeight).toStringAsFixed(2));
     }
 
     var tempPremixDetail = TempPremixDetail(
@@ -137,8 +133,7 @@ class PremixBloc extends BlocBase {
   }
 
   Future<int> savePremix() async {
-    final plan =
-        await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
+    final plan = await MrfPremixPlanDocDao().getByIdWithInfo(_mrfPremixPlanDocId);
 
     final premix = Premix.dbInsert(
       mrfPremixPlanDocId: _mrfPremixPlanDocId,

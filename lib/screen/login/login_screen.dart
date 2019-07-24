@@ -99,6 +99,7 @@ class _LoginFormState extends State<LoginForm> {
                   if (value.isEmpty) {
                     return Strings.msgPleaseEnterUsername;
                   }
+                  return null;
                 },
               ),
             ),
@@ -159,6 +160,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
         if (value.isEmpty) {
           return Strings.msgPleaseEnterPassword;
         }
+        return null;
       },
     );
   }
