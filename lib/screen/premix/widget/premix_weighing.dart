@@ -120,7 +120,7 @@ class _WeighingState extends State<Weighing> {
               children: <Widget>[
                 StreamBuilder<bool>(
                     stream: weighingBloc.isTaringStream,
-                    initialData: true,
+                    initialData: false,
                     builder: (context, snapshot) {
                       return Checkbox(
                         value: snapshot.data,

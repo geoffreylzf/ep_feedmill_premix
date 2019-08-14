@@ -11,17 +11,22 @@ class PremixScanBloc extends BlocBase {
   final _isItemPackingSelectedSubject = BehaviorSubject<bool>.seeded(false);
   final _isAllowAddonSubject = BehaviorSubject<bool>.seeded(false);
 
+  final _scanFocusSubject = BehaviorSubject<void>.seeded(0);
+
   Stream<SelectedItemPacking> get selectedItemPackingStream => _selectedItemPackingSubject.stream;
 
   Stream<bool> get isItemPackingSelectedStream => _isItemPackingSelectedSubject.stream;
 
   Stream<bool> get isAllowAddonStream => _isAllowAddonSubject.stream;
 
+  Stream<void> get scanFocusStream => _scanFocusSubject.stream;
+
   @override
   void dispose() {
     _isItemPackingSelectedSubject.close();
     _selectedItemPackingSubject.close();
     _isAllowAddonSubject.close();
+    _scanFocusSubject.close();
   }
 
   PremixDelegate _delegate;
@@ -42,13 +47,43 @@ class PremixScanBloc extends BlocBase {
   clearSelectedItemPacking() {
     _selectedItemPackingSubject.add(null);
     _isItemPackingSelectedSubject.add(false);
+    _scanFocusSubject.add(null);
   }
 
-  scan(int itemPackingId) async {
+  _recursiveSumAllIntChar(String str) {
+    if (str.length == 1) {
+      return int.parse(str);
+    } else {
+      var sumOfIpId = 0;
+      for (int i = 0; i < str.length; i++) {
+        sumOfIpId += int.parse(str[i]);
+      }
+      return _recursiveSumAllIntChar(sumOfIpId.toString());
+    }
+  }
+
+  scan(int itemPackingId, {manual = false}) async {
     if (itemPackingId == null) {
       _selectedItemPackingSubject
           .add(SelectedItemPacking.error(errorMessage: "Invalid ingredient barcode"));
       return;
+    }
+
+    if(!manual) {
+      final str = itemPackingId.toString();
+      final strLength = str.length;
+      final ipIdStr = str.substring(0, strLength - 1);
+      final sumSingle = int.parse(str.substring(strLength - 1));
+
+      final recursiveSumSingle = _recursiveSumAllIntChar(ipIdStr);
+
+      if (recursiveSumSingle != sumSingle) {
+        _selectedItemPackingSubject
+            .add(SelectedItemPacking.error(errorMessage: "Invalid barcode format"));
+        return;
+      }
+      itemPackingId = int.parse(ipIdStr);
+      print(itemPackingId);
     }
 
     final itemPacking = await ItemPackingDao().getById(itemPackingId);
@@ -110,7 +145,7 @@ class PremixScanBloc extends BlocBase {
   }
 
   manualSelectItemPacking(int itemPackingId) {
-    scan(itemPackingId);
+    scan(itemPackingId, manual: true);
     _delegate.onTabChange(1);
   }
 

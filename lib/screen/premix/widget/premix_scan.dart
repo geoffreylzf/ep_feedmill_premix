@@ -29,11 +29,13 @@ class CodeInput extends StatefulWidget {
 
 class _CodeInputState extends State<CodeInput> {
   final _scanController = TextEditingController();
+  final  _scanFocusNode = FocusNode();
   Timer _debounce;
 
   @override
   void dispose() {
     _scanController.dispose();
+    _scanFocusNode.dispose();
     super.dispose();
   }
 
@@ -50,6 +52,11 @@ class _CodeInputState extends State<CodeInput> {
         }
       });
     });
+
+    scanBloc.scanFocusStream.listen((_){
+      FocusScope.of(context).requestFocus(_scanFocusNode);
+    });
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
@@ -66,6 +73,7 @@ class _CodeInputState extends State<CodeInput> {
               keyboardType: TextInputType.numberWithOptions(),
               controller: _scanController,
               autofocus: true,
+              focusNode: _scanFocusNode,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(12.0),
                 border: OutlineInputBorder(),
@@ -98,6 +106,7 @@ class _SelectedIngredientState extends State<SelectedIngredient> {
             var iconColor = IconTheme.of(context).color;
             var firstLine = "Please press above and scan";
             var secondLine = "";
+            var weight = "";
 
             if (snapshot.connectionState != ConnectionState.waiting) {
               if (snapshot.data != null) {
@@ -107,13 +116,14 @@ class _SelectedIngredientState extends State<SelectedIngredient> {
                   iconColor = Theme.of(context).errorColor;
                   firstLine = snapshot.data.errorMessage;
                   secondLine = "";
+                  weight = "";
                 } else {
                   leftIcon = Icons.landscape;
                   rightIcon = Icons.cancel;
                   iconColor = Theme.of(context).primaryColor;
                   firstLine = snapshot.data.skuName;
-                  secondLine = snapshot.data.skuCode +
-                      " (${snapshot.data.weight.toString()} kg)";
+                  secondLine = snapshot.data.skuCode;
+                  weight = " (${snapshot.data.weight.toString()} kg)";
                 }
               }
             }
@@ -131,15 +141,16 @@ class _SelectedIngredientState extends State<SelectedIngredient> {
                 ),
                 Column(
                   children: <Widget>[
-                    Text(firstLine,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold)),
-                    Text(
-                      secondLine,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                      ),
+                    Text(firstLine, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    RichText(
+                      text: TextSpan(
+                          text: secondLine,
+                          style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                          children: [
+                            TextSpan(
+                                text: weight,
+                                style: TextStyle(fontSize: 36, fontWeight: FontWeight.w800)),
+                          ]),
                     ),
                   ],
                 ),

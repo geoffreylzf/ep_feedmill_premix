@@ -6,7 +6,7 @@ import 'package:rxdart/rxdart.dart';
 
 class PremixWeighingBloc extends BlocBase {
   final _isWeighingByBtSubject = BehaviorSubject<bool>.seeded(false);
-  final _isTaringSubject = BehaviorSubject<bool>.seeded(true);
+  final _isTaringSubject = BehaviorSubject<bool>.seeded(false);
 
   final _grossWeightSubject = BehaviorSubject<double>();
   final _tareWeightSubject = BehaviorSubject<double>();

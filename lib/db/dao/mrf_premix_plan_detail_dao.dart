@@ -42,6 +42,7 @@ class MrfPremixPlanDetailDao {
     WHERE mrf_premix_plan_doc_id = ?
     AND group_no = ?
     AND item_packing.id NOT in (SELECT item_packing_id FROM temp_premix_detail)
+    ORDER BY sequence
     """, [mrfPremixPlanDocId, groupNo]);
     return res.isNotEmpty ? res.map((c) => MrfPremixPlanDetailWithInfo.fromJson(c)).toList() : [];
   }
