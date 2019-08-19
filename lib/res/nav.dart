@@ -66,6 +66,14 @@ class NavDrawerStart extends StatelessWidget {
               Navigator.pushNamed(mainContext, Routes.upload);
             },
           ),
+          ListTile(
+            leading: Icon(Icons.check_circle_outline),
+            title: Text(Strings.planCheckList),
+            onTap: () {
+              Navigator.pop(mainContext);
+              Navigator.pushNamed(mainContext, Routes.planCheckList);
+            },
+          ),
           Divider(),
           ListTile(
             leading: Icon(Icons.settings),

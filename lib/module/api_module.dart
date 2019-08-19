@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ep_feedmill/model/api_response.dart';
 import 'package:ep_feedmill/model/auth.dart';
+import 'package:ep_feedmill/model/plan_check.dart';
 import 'package:ep_feedmill/model/table/item_packing.dart';
 import 'package:ep_feedmill/model/table/mrf_formula_category.dart';
 import 'package:ep_feedmill/model/table/mrf_premix_plan_doc.dart';
@@ -18,12 +19,13 @@ class ApiModule {
 
   ApiModule._internal();
 
-  static const _globalUrl =
-      "http://epgroup.dlinkddns.com:5030/eperp/index.php?r=";
+  static const _globalUrl = "http://epgroup.dlinkddns.com:5030/eperp/index.php?r=";
   static const _localUrl = "http://192.168.8.1:8833/eperp/index.php?r=";
 
   static const _loginModule = "apiMobileAuth/login";
   static const _housekeepingModule = "apiMobileFeedmill/getHouseKeeping";
+  static const _planCheckListModule = "apiMobileFeedmill/getPlanCheckList";
+  static const _updatePlanCheckListModule = "apiMobileFeedmill/updatePlanCheckList";
   static const _uploadModule = "apiMobileFeedmill/upload";
 
   Future<String> constructUrl(String module) async {
@@ -41,8 +43,7 @@ class ApiModule {
     throw Exception('Connection Failed');
   }
 
-  Future<ApiResponse<Auth>> login(
-      String username, String password, String email) async {
+  Future<ApiResponse<Auth>> login(String username, String password, String email) async {
     String basicAuth = User(username, password).getCredential();
 
     final response = await http.post(
@@ -100,6 +101,33 @@ class ApiModule {
       await constructUrl(_housekeepingModule) + "&type=mrf_premix_plan_doc",
       headers: {'authorization': basicAuth},
     );
+    return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
+  }
+
+  Future<ApiResponse<List<PlanCheck>>> getPlanCheckList(int isVerify) async {
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
+
+    final response = await http.get(
+      await constructUrl(_planCheckListModule) + "&is_verify=" + isVerify.toString(),
+      headers: {'authorization': basicAuth},
+    );
+    return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
+  }
+
+  Future<ApiResponse<UploadResult>> updatePlanCheckList(UploadBody uploadBody) async {
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
+
+    final response = await http.post(
+      await constructUrl(_updatePlanCheckListModule),
+      headers: {
+        'authorization': basicAuth,
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(uploadBody.toJson()),
+    );
+
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
 }

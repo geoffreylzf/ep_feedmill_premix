@@ -6,4 +6,5 @@ class Routes {
   static const login = "login";
   static const premixHistory = "premixHistory";
   static const upload = "upload";
+  static const planCheckList = "planCheckList";
 }

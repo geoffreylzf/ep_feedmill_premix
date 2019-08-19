@@ -8,6 +8,7 @@ import 'package:ep_feedmill/res/theme.dart';
 import 'package:ep_feedmill/screen/home/home_screen.dart';
 import 'package:ep_feedmill/screen/housekeeping/housekeeping_screen.dart';
 import 'package:ep_feedmill/screen/login/login_screen.dart';
+import 'package:ep_feedmill/screen/plan_check_list/plan_check_list_screen.dart';
 import 'package:ep_feedmill/screen/premix_history/premix_history_screen.dart';
 import 'package:ep_feedmill/screen/setting/setting_screen.dart';
 import 'package:ep_feedmill/screen/upload/upload_screen.dart';
@@ -52,6 +53,7 @@ class App extends StatelessWidget {
           Routes.setting: (context) => SettingScreen(),
           Routes.premixHistory: (context) => PremixHistoryScreen(),
           Routes.upload: (context) => UploadScreen(),
+          Routes.planCheckList: (context) => PlanCheckListScreen(),
         },
       ),
     );

@@ -2,6 +2,7 @@ class Strings {
   static const appName = "Eng Peng Feedmill";
   static const houseKeeping = "Housekeeping";
   static const upload = "Upload";
+  static const planCheckList = "Plan Check List";
   static const pendingUpload = "Pending Upload";
   static const premixPlanBatch = "Premix Plan Batch";
   static const premixHistory = "Premix History";
@@ -64,4 +65,6 @@ class Strings {
   static const msgPleaseEnterIp = "Please enter IP Address";
   static const msgPleaseEnterPort = "Please enter port";
   static const msgSignInWithGoogle = "Sign in with Google";
+
+  static const refresh = "Refresh";
 }
