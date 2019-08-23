@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginDelegate {
               Positioned.fill(
                 child: Opacity(
                   opacity: 0.1,
-                  child: Image.asset('images/logo_ep_large.png'),
+                  child: Image.asset('assets/images/logo_ep_large.png'),
                 ),
               ),
               LoginForm(),

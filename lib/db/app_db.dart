@@ -1,8 +1,9 @@
 import 'package:ep_feedmill/db/db_sql.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-const _version = 1;
+const _version = 2;
 const _dbName = "ep_feedmill.db";
 
 class AppDb {
@@ -28,6 +29,7 @@ class AppDb {
       path,
       version: _version,
       onCreate: (Database db, int version) async {
+        debugPrint("oncreate: " + version.toString());
         await db.execute(DbSql.createItemPackingTable);
         await db.execute(DbSql.createMrfFormulaCategoryTable);
         await db.execute(DbSql.createMrfPremixPlanDocTable);
@@ -38,6 +40,14 @@ class AppDb {
         await db.execute(DbSql.createPremixDetailTable);
 
         await db.execute(DbSql.createLogTable);
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        debugPrint("on upgrade old db ver: " + oldVersion.toString());
+        debugPrint("on upgrade new db ver: " + newVersion.toString());
+        if (oldVersion <= 1) {
+          debugPrint("execute migration 1");
+          await db.execute("ALTER TABLE item_packing ADD COLUMN is_premix INTEGER DEFAULT 0");
+        }
       },
     );
   }

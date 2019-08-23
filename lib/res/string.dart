@@ -31,6 +31,7 @@ class Strings {
   static const login = "Login";
   static const complete = "Complete";
   static const add = "Add";
+  static const autoAdd = "Auto Add";
   static const address = "Address";
   static const status = "Status";
   static const batch = "Batch";

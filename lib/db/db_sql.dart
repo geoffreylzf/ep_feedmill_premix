@@ -3,7 +3,8 @@ class DbSql {
       CREATE TABLE `item_packing` (
       `id` INTEGER PRIMARY KEY, 
       `sku_code` TEXT, 
-      `sku_name` TEXT);
+      `sku_name` TEXT,
+      `is_premix` INTEGER DEFAULT 0);
       """;
 
   static final createMrfFormulaCategoryTable = """

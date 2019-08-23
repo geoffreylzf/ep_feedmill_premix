@@ -65,87 +65,93 @@ class _PlanListState extends State<PlanList> {
           itemBuilder: (ctx, position) {
             final planCheck = list[position];
             final detailList = planCheck.detailList;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+
+            final detailRowList = detailList.map((d) {
+              return Row(
+                children: [
+                  Expanded(child: Center(child: Text(d.groupNo.toString()))),
+                  Expanded(child: Center(child: Text(d.totalBatch.toString()))),
+                  Expanded(child: Center(child: Text(d.completeBatch.toString()))),
+                  if (d.completeBatch != 0)
+                    Expanded(
+                      child: Center(
+                        child: Checkbox(
+                          value: d.isVerify == 1,
+                          onChanged: (b) {
+                            if (b) {
+                              d.isVerify = 1;
+                            } else {
+                              d.isVerify = 0;
+                            }
+                            pclBloc.tickGroupVerify();
+                          },
+                        ),
+                      ),
+                    )
+                  else
+                    Expanded(child: Container(height: 32))
+                ],
+              );
+            });
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(planCheck.recipeName,
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                                Text(planCheck.skuName,
+                                    style: TextStyle(color: Colors.black87, fontSize: 14)),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(planCheck.docNo, style: TextStyle(fontSize: 12)),
+                                Text(planCheck.docDate, style: TextStyle(fontSize: 16)),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      color: Colors.black,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(planCheck.recipeName,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                            Text(planCheck.skuName,
-                                style: TextStyle(color: Colors.black87, fontSize: 14)),
+                            SimpleHeader('Group'),
+                            SimpleHeader('Total Batch'),
+                            SimpleHeader('Complete'),
+                            SimpleHeader('Verify'),
                           ],
                         ),
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(planCheck.docNo, style: TextStyle(fontSize: 12)),
-                            Text(planCheck.docDate, style: TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                    ),
+                    ...detailRowList,
+                  ],
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: detailList.length + 1,
-                  itemBuilder: (ctx, position) {
-                    if (position == 0) {
-                      return Container(
-                        color: Colors.black,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SimpleHeader('Group'),
-                              SimpleHeader('Total Batch'),
-                              SimpleHeader('Complete'),
-                              SimpleHeader('Verify'),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                    final detail = detailList[position - 1];
-                    return Row(
-                      children: [
-                        Expanded(child: Center(child: Text(detail.groupNo.toString()))),
-                        Expanded(child: Center(child: Text(detail.totalBatch.toString()))),
-                        Expanded(child: Center(child: Text(detail.completeBatch.toString()))),
-                        if (detail.completeBatch != 0)
-                          Expanded(
-                            child: Center(
-                              child: Checkbox(
-                                value: detail.isVerify == 1,
-                                onChanged: (b) {
-                                  if (b) {
-                                    detail.isVerify = 1;
-                                  } else {
-                                    detail.isVerify = 0;
-                                  }
-                                  pclBloc.tickGroupVerify();
-                                },
-                              ),
-                            ),
-                          )
-                        else
-                          Expanded(child: Container(height: 32))
-                      ],
-                    );
-                  },
-                ),
-              ],
+              ),
             );
           },
         );

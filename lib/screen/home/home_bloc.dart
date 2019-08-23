@@ -13,8 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeBloc extends BlocBase {
-  final _mrfPremixPlanDocListSubject =
-      BehaviorSubject<List<MrfPremixPlanDocWithInfo>>();
+  final _mrfPremixPlanDocListSubject = BehaviorSubject<List<MrfPremixPlanDocWithInfo>>();
 
   final _broilerCheckedSubject = BehaviorSubject<bool>();
   final _breederCheckedSubject = BehaviorSubject<bool>();
@@ -33,8 +32,8 @@ class HomeBloc extends BlocBase {
 
   Stream<int> get noUploadCountStream => _noUploadCountSubject.stream;
 
-  Stream<String> get categorySqlStream => Observable.combineLatest3(
-          broilerCheckedStream, breederCheckedStream, swineCheckedStream,
+  Stream<String> get categorySqlStream =>
+      Observable.combineLatest3(broilerCheckedStream, breederCheckedStream, swineCheckedStream,
           (bool broiler, bool breeder, bool swine) {
         return MrfFormulaCategory.getSqlFilter(
           broiler: broiler,
@@ -42,8 +41,6 @@ class HomeBloc extends BlocBase {
           swine: swine,
         );
       });
-
-
 
   @override
   void dispose() {
@@ -64,12 +61,9 @@ class HomeBloc extends BlocBase {
   }
 
   _init() async {
-    _broilerCheckedSubject
-        .add(await SharedPreferencesModule().getBroilerCheck() ?? true);
-    _breederCheckedSubject
-        .add(await SharedPreferencesModule().getBreederCheck() ?? true);
-    _swineCheckedSubject
-        .add(await SharedPreferencesModule().getSwineCheck() ?? true);
+    _broilerCheckedSubject.add(await SharedPreferencesModule().getBroilerCheck() ?? true);
+    _breederCheckedSubject.add(await SharedPreferencesModule().getBreederCheck() ?? true);
+    _swineCheckedSubject.add(await SharedPreferencesModule().getSwineCheck() ?? true);
 
     categorySqlStream.listen((sql) {
       _categoryFilterSql = sql;
@@ -81,8 +75,8 @@ class HomeBloc extends BlocBase {
 
   loadMrfPremixPlanDoc() async {
     final groupNo = await SharedPreferencesModule().getGroupNo();
-    _mrfPremixPlanDocListSubject.add(await MrfPremixPlanDocDao()
-        .getAllWithInfo(_categoryFilterSql, groupNo));
+    _mrfPremixPlanDocListSubject
+        .add(await MrfPremixPlanDocDao().getAllWithInfo(_categoryFilterSql, groupNo));
   }
 
   loadNoUploadCount() async {
@@ -102,8 +96,8 @@ class HomeBloc extends BlocBase {
           await MrfPremixPlanDetailDao().insert(detail);
         });
       });
-      _delegate.onDialogMessage(Strings.success,
-          "Newest premix plan document successfully retrieve.");
+      _delegate.onDialogMessage(
+          Strings.success, "Newest premix plan document successfully retrieve.");
     } catch (e) {
       _delegate.onDialogMessage(Strings.error, e.toString());
     } finally {
@@ -132,5 +126,41 @@ class HomeBloc extends BlocBase {
       mrfPremixPlanDocId: mrfPremixPlanDocId,
       groupNo: groupNo,
     );
+  }
+
+  _recursiveSumAllIntChar(String str) {
+    if (str.length == 1) {
+      return int.parse(str);
+    } else {
+      var sumOfIpId = 0;
+      for (int i = 0; i < str.length; i++) {
+        sumOfIpId += int.parse(str[i]);
+      }
+      final sumStr = sumOfIpId.toString();
+      return int.parse(sumStr.substring(sumStr.length - 1));
+    }
+  }
+
+  Future<int> scan(int planId) async {
+    final str = planId.toString();
+    final strLength = str.length;
+    final ipIdStr = str.substring(0, strLength - 1);
+    final sumSingle = int.parse(str.substring(strLength - 1));
+
+    final recursiveSumSingle = _recursiveSumAllIntChar(ipIdStr);
+
+    if (recursiveSumSingle != sumSingle) {
+      _delegate.onDialogMessage(Strings.error, "Invalid barcode format.");
+      return null;
+    }
+
+    planId = int.parse(ipIdStr);
+
+    final plan = await MrfPremixPlanDocDao().getByIdWithInfo(planId);
+    if (plan == null) {
+      _delegate.onDialogMessage(Strings.error, "Premix Plan does not exist.");
+      return null;
+    }
+    return planId;
   }
 }

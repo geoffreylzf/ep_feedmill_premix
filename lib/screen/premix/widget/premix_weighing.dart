@@ -112,7 +112,40 @@ class _WeighingState extends State<Weighing> {
             ),
           ),
         ),
-        SizedBox(height: 295),
+        StreamBuilder<SelectedItemPacking>(
+            stream: scanBloc.selectedItemPackingStream,
+            builder: (context, snapshot) {
+              var isPremix = 0;
+              if (snapshot.data != null) {
+                if (!snapshot.data.isError) {
+                  isPremix = snapshot.data.isPremix;
+                }
+              }
+              if (isPremix == 0) {
+                return Container(height: 55);
+              }
+              return SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                  child: RaisedButton.icon(
+                    onPressed: () {
+                      premixBloc.autoInsertTempPremixDetailWithWeight().then((success) {
+                        if (success) {
+                          weightController.text = "";
+                          weighingBloc.setIsWeighingByBt(false);
+                        }
+                      });
+                    },
+                    icon: Icon(Icons.leak_remove),
+                    label: Text(
+                      Strings.autoAdd.toUpperCase(),
+                    ),
+                  ),
+                ),
+              );
+            }),
+        SizedBox(height: 240),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

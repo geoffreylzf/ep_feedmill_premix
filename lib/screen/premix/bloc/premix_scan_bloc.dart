@@ -58,7 +58,8 @@ class PremixScanBloc extends BlocBase {
       for (int i = 0; i < str.length; i++) {
         sumOfIpId += int.parse(str[i]);
       }
-      return _recursiveSumAllIntChar(sumOfIpId.toString());
+      final sumStr = sumOfIpId.toString();
+      return int.parse(sumStr.substring(sumStr.length - 1));
     }
   }
 
@@ -69,7 +70,7 @@ class PremixScanBloc extends BlocBase {
       return;
     }
 
-    if(!manual) {
+    if (!manual) {
       final str = itemPackingId.toString();
       final strLength = str.length;
       final ipIdStr = str.substring(0, strLength - 1);
@@ -83,7 +84,6 @@ class PremixScanBloc extends BlocBase {
         return;
       }
       itemPackingId = int.parse(ipIdStr);
-      print(itemPackingId);
     }
 
     final itemPacking = await ItemPackingDao().getById(itemPackingId);
@@ -140,6 +140,7 @@ class PremixScanBloc extends BlocBase {
         mrfPremixPlanDetailId: planDetailId,
         skuName: itemPacking.skuName,
         skuCode: itemPacking.skuCode,
+        isPremix: itemPacking.isPremix,
         weight: formulaWeight));
     _isItemPackingSelectedSubject.add(true);
   }
@@ -163,14 +164,20 @@ class PremixScanBloc extends BlocBase {
 }
 
 class SelectedItemPacking {
-  int id, mrfPremixPlanDetailId;
+  int id, mrfPremixPlanDetailId, isPremix;
   String skuName, skuCode;
   double weight;
   bool isError = false;
   String errorMessage;
 
-  SelectedItemPacking(
-      {this.id, this.mrfPremixPlanDetailId, this.skuName, this.skuCode, this.weight});
+  SelectedItemPacking({
+    this.id,
+    this.mrfPremixPlanDetailId,
+    this.skuName,
+    this.skuCode,
+    this.isPremix,
+    this.weight,
+  });
 
   SelectedItemPacking.error({this.errorMessage}) : this.isError = true;
 }

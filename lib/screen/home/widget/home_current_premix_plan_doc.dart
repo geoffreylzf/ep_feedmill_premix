@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:ep_feedmill/animation/slide_right_route.dart';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
+import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/home/home_bloc.dart';
 import 'package:ep_feedmill/screen/plan/plan_screen.dart';
 import 'package:ep_feedmill/widget/card_label_small.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CurrentPremixPlanDoc extends StatefulWidget {
   @override
@@ -12,9 +16,41 @@ class CurrentPremixPlanDoc extends StatefulWidget {
 }
 
 class _CurrentPremixPlanDocState extends State<CurrentPremixPlanDoc> {
+
+  final _scanController = TextEditingController();
+  Timer _debounce;
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    super.dispose();
+  }
+
   @override
   Card build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
+
+    _scanController.addListener(() {
+      if (_debounce?.isActive ?? false) _debounce.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () async {
+        String text = _scanController.text;
+        if (text.isNotEmpty) {
+          _scanController.text = "";
+          int planId = await homeBloc.scan(int.tryParse(text));
+          if(planId != null){
+            Navigator.push(
+              context,
+              SlideRightRoute(
+                widget: PlanScreen(
+                  mrfPremixPlanDocId: planId,
+                ),
+              ),
+            );
+          }
+        }
+      });
+    });
+
     return Card(
       color: Colors.white54,
       elevation: 0,
@@ -24,6 +60,28 @@ class _CurrentPremixPlanDocState extends State<CurrentPremixPlanDoc> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             CardLabelSmall("Current Premix Plan Document"),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.settings_overscan,
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    keyboardType: TextInputType.numberWithOptions(),
+                    controller: _scanController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(12.0),
+                      border: OutlineInputBorder(),
+                      labelText: Strings.barcode,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             Expanded(child: PremixPlanDocList()),
             Row(
               children: <Widget>[
@@ -105,7 +163,7 @@ class _PremixPlanDocListState extends State<PremixPlanDocList> {
                                 ),
                               ),
                               Text(
-                                doc.docNo,
+                                "${doc.docNo} (${doc.docDate})",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,

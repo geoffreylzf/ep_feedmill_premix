@@ -11,6 +11,7 @@ import 'package:ep_feedmill/widget/local_check_box.dart';
 import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:package_info/package_info.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -47,12 +48,13 @@ class _HomeScreenState extends State<HomeScreen> implements HomeDelegate {
         BlocProvider<LocalBloc>(bloc: localBloc),
       ],
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(title: Text(Strings.appName)),
         body: Stack(
           children: <Widget>[
             Center(
               child: Opacity(
-                opacity: 0.20,
+                opacity: 0.0,
                 child: StoreConnector<int, String>(
                   converter: (store) => store.state.toString(),
                   builder: (ctx, count) {
@@ -89,12 +91,27 @@ class Dashboard extends StatelessWidget {
           flex: 3,
           child: Container(
             padding: EdgeInsets.fromLTRB(8, 8, 4, 8),
-            child: ListView(
+            child: Column(
               children: <Widget>[
                 CategorySelection(),
                 PremixCard(),
                 UploadCard(),
+                Expanded(
+                  child: StoreConnector<int, String>(
+                    converter: (store) => store.state.toString(),
+                    builder: (ctx, count) {
+                      return Center(
+                        child: Text(
+                          count,
+                          style: TextStyle(fontSize: 160, fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                GroupBtn(),
                 LocalCheckBox(localBloc: localBloc),
+                VersionText(),
               ],
             ),
           ),
@@ -198,6 +215,48 @@ class UploadCard extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class VersionText extends StatefulWidget {
+  @override
+  _VersionTextState createState() => _VersionTextState();
+}
+
+class GroupBtn extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: RaisedButton.icon(
+            label: Text(Strings.group.toUpperCase()),
+            icon: Icon(Icons.group_work),
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.setting);
+            }),
+      ),
+    );
+  }
+}
+
+class _VersionTextState extends State<VersionText> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: FutureBuilder<PackageInfo>(
+        future: PackageInfo.fromPlatform(),
+        builder: (ctx, snapshot) {
+          var version = "";
+          if (snapshot.hasData) {
+            version = "Version " + snapshot.data.version;
+          }
+          return Center(child: Text(version));
+        },
       ),
     );
   }

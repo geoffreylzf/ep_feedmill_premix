@@ -48,6 +48,7 @@ class _PremixScreenState extends State<PremixScreen>
     weighingBloc = PremixWeighingBloc(
       tempBloc: tempBloc,
       bluetoothBloc: bluetoothBloc,
+      scanBloc: scanBloc,
     );
     premixBloc = PremixBloc(
       delegate: this,
@@ -99,6 +100,7 @@ class _PremixScreenState extends State<PremixScreen>
       child: WillPopScope(
         onWillPop: () => _onBackPressed(context),
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             title: StreamBuilder<MrfPremixPlanDocWithInfo>(
                 stream: premixBloc.planDocStream,
@@ -116,8 +118,7 @@ class _PremixScreenState extends State<PremixScreen>
                           backgroundColor: Theme.of(context).primaryColorLight,
                           label: Text(
                             "${Strings.batch} ${premixBloc.batchNo}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 12),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                         ),
                       )

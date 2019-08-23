@@ -126,6 +126,47 @@ class PremixBloc extends BlocBase {
     return true;
   }
 
+  Future<bool> autoInsertTempPremixDetailWithWeight() async {
+    final itemPacking = _scanBloc.getSelectedItemPacking();
+    if (itemPacking == null) {
+      _delegate.onPremixError("Please enter ingredient");
+      return false;
+    }
+
+    final weight = itemPacking.weight;
+
+    var lastItemPacking = await TempPremixDetailDao().getLast();
+    double grossWeight;
+    double tareWeight;
+    double netWeight;
+
+    if (lastItemPacking == null || !_weighingBloc.getIsTaring()) {
+      grossWeight = weight;
+      tareWeight = 0;
+      netWeight = weight;
+    } else {
+      grossWeight = weight;
+      tareWeight = lastItemPacking.grossWeight;
+      netWeight = double.tryParse((weight - lastItemPacking.grossWeight).toStringAsFixed(2));
+    }
+
+    var tempPremixDetail = TempPremixDetail(
+      itemPackingId: itemPacking.id,
+      mrfPremixPlanDetailId: itemPacking.mrfPremixPlanDetailId,
+      grossWeight: grossWeight,
+      tareWeight: tareWeight,
+      netWeight: netWeight,
+      isBt: 0,
+    );
+
+    await TempPremixDetailDao().insert(tempPremixDetail);
+    await _tempBloc.loadTempPremixDetailList();
+    await _loadPlanDetailWithInfoList();
+    _scanBloc.clearSelectedItemPacking();
+    Vibrate.vibrate();
+    return true;
+  }
+
   deleteTempPremixDetail(int id) async {
     await TempPremixDetailDao().deleteById(id);
     await _tempBloc.loadTempPremixDetailList();
