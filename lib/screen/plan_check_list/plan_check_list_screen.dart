@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/mixin/simple_alert_dialog_mixin.dart';
 import 'package:ep_feedmill/model/plan_check.dart';
@@ -11,24 +13,71 @@ class PlanCheckListScreen extends StatefulWidget {
 }
 
 class _PlanCheckListScreenState extends State<PlanCheckListScreen> with SimpleAlertDialogMixin {
-  PlanCheckListBloc pclList;
+  PlanCheckListBloc pclListBloc;
+
+  final _scanController = TextEditingController();
+  Timer _debounce;
 
   @override
   void initState() {
     super.initState();
-    pclList = PlanCheckListBloc(mixin: this);
+    pclListBloc = PlanCheckListBloc(mixin: this);
+  }
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    _scanController.addListener(() {
+      if (_debounce?.isActive ?? false) _debounce.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () async {
+        String text = _scanController.text;
+        if (text.isNotEmpty) {
+          _scanController.text = "";
+          await pclListBloc.filterPlanCheckList(int.tryParse(text));
+        }
+      });
+    });
+
     return BlocProvider(
-      bloc: pclList,
+      bloc: pclListBloc,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(Strings.planCheckList),
         ),
         body: Column(
           children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Icon(
+                      Icons.settings_overscan,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.numberWithOptions(),
+                      controller: _scanController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(12.0),
+                        border: OutlineInputBorder(),
+                        labelText: Strings.barcode,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(child: PlanList()),
             BtnList(),
           ],
@@ -97,9 +146,7 @@ class _PlanListState extends State<PlanList> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blueAccent)
-                ),
+                decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -67,7 +67,7 @@ class PlanCheckListBloc extends BlocBase {
         isVerify = 1;
       }
 
-      _planCheckList.forEach((pl){
+      _planCheckList.forEach((pl) {
         pl.detailList = pl.detailList.where((d) => d.isVerify == isVerify).toList();
       });
 
@@ -88,5 +88,36 @@ class PlanCheckListBloc extends BlocBase {
   setForCheck(bool b) {
     _isForCheckSubject.add(b);
     loadPlanCheckList();
+  }
+
+  _recursiveSumAllIntChar(String str) {
+    if (str.length == 1) {
+      return int.parse(str);
+    } else {
+      var sumOfIpId = 0;
+      for (int i = 0; i < str.length; i++) {
+        sumOfIpId += int.parse(str[i]);
+      }
+      final sumStr = sumOfIpId.toString();
+      return int.parse(sumStr.substring(sumStr.length - 1));
+    }
+  }
+
+  filterPlanCheckList(int planId) {
+    final str = planId.toString();
+    final strLength = str.length;
+    final ipIdStr = str.substring(0, strLength - 1);
+    final sumSingle = int.parse(str.substring(strLength - 1));
+
+    final recursiveSumSingle = _recursiveSumAllIntChar(ipIdStr);
+
+    if (recursiveSumSingle != sumSingle) {
+      _simpleAlertDialogMixin.onDialogMessage(Strings.error, "Invalid barcode format.");
+      return;
+    }
+
+    planId = int.parse(ipIdStr);
+
+    _planCheckListSubject.add(_planCheckList.where((x) => x.id == planId).toList());
   }
 }
