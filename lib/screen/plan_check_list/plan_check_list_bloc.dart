@@ -118,6 +118,8 @@ class PlanCheckListBloc extends BlocBase {
 
     planId = int.parse(ipIdStr);
 
-    _planCheckListSubject.add(_planCheckList.where((x) => x.id == planId).toList());
+    _planCheckList = _planCheckList.where((x) => x.id == planId).toList();
+
+    _planCheckListSubject.add(_planCheckList);
   }
 }

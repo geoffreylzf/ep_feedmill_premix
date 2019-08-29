@@ -201,9 +201,23 @@ class PremixBloc extends BlocBase {
   }
 
   Future<bool> validate() async {
-    final temp = await TempPremixDetailDao().getAll();
-    if (temp.length == 0) {
-      _delegate.onPremixError("Please select at least 1 ingredient to save.");
+    //20190828 This is check for at least 1 item in temp
+    //final temp = await TempPremixDetailDao().getAll();
+    //if (temp.length == 0) {
+    //  _delegate.onPremixError("Please select at least 1 ingredient to save.");
+    //  return false;
+    //}
+    //return true;
+
+    final list = await MrfPremixPlanDetailDao().getByMrfPremixPlanDocIdGroupNoWithInfoNotInTemp(
+      mrfPremixPlanDocId: _mrfPremixPlanDocId,
+      groupNo: _groupNo,
+    );
+    if (list.length > 0) {
+      final skuNameList = list.map((x) => x.skuName).join("\n");
+      _delegate.onPremixError("Premix Not Complete !!!\n\n"
+          "Following ingredient is missing :\n\n"
+          "$skuNameList");
       return false;
     }
     return true;
