@@ -17,8 +17,8 @@ class PrintUtil {
     s += _fmtLeftLine("Recipe N.: " + premix.recipeName);
     s += _fmtLeftLine("Group    : " + premix.groupNo.toString());
     s += _fmtLeftLine("Batch    : " + premix.batchNo.toString());
-    s += _fmtLeftLine("Sku Name : " + premix.skuName);
-    s += _fmtLeftLine("Sku Code : " + premix.skuCode);
+    s += _fmtLeftLine("Sku Name : " + (premix.skuName ?? ""));
+    s += _fmtLeftLine("Sku Code : " + (premix.skuCode ?? ""));
     s += _fmtLeftLine("Doc No   : " + premix.docNo);
     s += _fmtLeftLine("Timestamp: " + premix.timestamp);
     s += _fmtLeftLine();
