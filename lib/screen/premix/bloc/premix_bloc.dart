@@ -14,8 +14,7 @@ import 'package:ep_feedmill/screen/premix/bloc/premix_weighing_bloc.dart';
 import 'package:ep_feedmill/screen/premix/premix_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:uuid/uuid.dart';
-import 'package:vibrate/vibrate.dart';
+import 'package:vibration/vibration.dart';
 
 class PremixBloc extends BlocBase {
   final _planDocSubject = BehaviorSubject<MrfPremixPlanDocWithInfo>();
@@ -122,7 +121,9 @@ class PremixBloc extends BlocBase {
     await _tempBloc.loadTempPremixDetailList();
     await _loadPlanDetailWithInfoList();
     _scanBloc.clearSelectedItemPacking();
-    Vibrate.vibrate();
+    if (Vibration.hasVibrator() != null) {
+      Vibration.vibrate();
+    }
     return true;
   }
 
@@ -163,7 +164,9 @@ class PremixBloc extends BlocBase {
     await _tempBloc.loadTempPremixDetailList();
     await _loadPlanDetailWithInfoList();
     _scanBloc.clearSelectedItemPacking();
-    Vibrate.vibrate();
+    if (Vibration.hasVibrator() != null) {
+      Vibration.vibrate();
+    }
     return true;
   }
 
@@ -180,7 +183,7 @@ class PremixBloc extends BlocBase {
       mrfPremixPlanDocId: _mrfPremixPlanDocId,
       batchNo: _batchNo,
       groupNo: _groupNo,
-      uuid: Uuid().v1(),
+      uuid: _groupNo.toString().padLeft(2, '0') + DateTime.now().millisecondsSinceEpoch.toString(),
       recipeName: plan.recipeName,
       docNo: plan.docNo,
       formulaCategoryId: plan.formulaCategoryId,

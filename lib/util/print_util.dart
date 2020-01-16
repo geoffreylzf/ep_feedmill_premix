@@ -20,6 +20,7 @@ class PrintUtil {
     s += _fmtLeftLine("Sku Name : " + (premix.skuName ?? ""));
     s += _fmtLeftLine("Sku Code : " + (premix.skuCode ?? ""));
     s += _fmtLeftLine("Doc No   : " + premix.docNo);
+    s += _fmtLeftLine("UUID     : " + premix.uuid);
     s += _fmtLeftLine("Timestamp: " + premix.timestamp);
     s += _fmtLeftLine();
     s += _fmtLeftLine("-----------------Ingredients-----------------");
