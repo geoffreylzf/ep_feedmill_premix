@@ -2,6 +2,7 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/bloc/bluetooth_bloc.dart';
+import 'package:ep_feedmill/module/api_module.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_scan_bloc.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_temp_bloc.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,20 @@ import 'package:rxdart/rxdart.dart';
 
 class PremixWeighingBloc extends BlocBase {
   final _isWeighingByBtSubject = BehaviorSubject<bool>.seeded(false);
+  final _isAllowManualSubject = BehaviorSubject<bool>.seeded(false);
   final _isTaringSubject = BehaviorSubject<bool>.seeded(false);
 
   final _grossWeightSubject = BehaviorSubject<double>();
   final _tareWeightSubject = BehaviorSubject<double>();
 
   Stream<bool> get isWeighingByBtStream => _isWeighingByBtSubject.stream;
+
+  Stream<bool> get isAllowManualStream => _isAllowManualSubject.stream;
+
+  Stream<bool> get isWeighingEditable =>
+      Observable.combineLatest2(isWeighingByBtStream, isAllowManualStream, (bool b, bool m) {
+        return !(b || !m);
+      });
 
   Stream<bool> get isTaringStream => _isTaringSubject.stream;
 
@@ -34,6 +43,7 @@ class PremixWeighingBloc extends BlocBase {
   @override
   void dispose() {
     _isWeighingByBtSubject.close();
+    _isAllowManualSubject.close();
     _isTaringSubject.close();
 
     _grossWeightSubject.close();
@@ -59,7 +69,7 @@ class PremixWeighingBloc extends BlocBase {
 
     _bluetoothBloc.weighingResultStream.listen((data) {
       final weight = double.tryParse(data);
-      if(!_grossWeightSubject.isClosed){
+      if (!_grossWeightSubject.isClosed) {
         _grossWeightSubject?.add(weight);
       }
     });
@@ -83,6 +93,16 @@ class PremixWeighingBloc extends BlocBase {
         }
       }
     });
+
+    _scanBloc.selectedItemPackingStream.listen((item) {
+      if (item != null && !item.isError) {
+        if (item.weight > 0.05) {
+          _isAllowManualSubject.add(false);
+        } else {
+          _isAllowManualSubject.add(true);
+        }
+      }
+    });
   }
 
   setIsWeighingByBt(bool b) {
@@ -93,11 +113,29 @@ class PremixWeighingBloc extends BlocBase {
     return _isWeighingByBtSubject.value;
   }
 
+  setIsAllowManual(bool b) {
+    _isAllowManualSubject.add(b);
+  }
+
   setIsTaring(bool b) {
     _isTaringSubject.add(b);
   }
 
   bool getIsTaring() {
     return _isTaringSubject.value;
+  }
+
+  Future<bool> verifyPasswordForManual(String password) async {
+    try {
+      final res  = await ApiModule().verifyOTP(password);
+      if(res.result){
+        _isAllowManualSubject.add(true);
+        _isWeighingByBtSubject.add(false);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }

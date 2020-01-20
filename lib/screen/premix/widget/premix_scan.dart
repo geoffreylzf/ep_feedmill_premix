@@ -29,7 +29,7 @@ class CodeInput extends StatefulWidget {
 
 class _CodeInputState extends State<CodeInput> {
   final _scanController = TextEditingController();
-  final  _scanFocusNode = FocusNode();
+  final _scanFocusNode = FocusNode();
   Timer _debounce;
 
   @override
@@ -53,8 +53,13 @@ class _CodeInputState extends State<CodeInput> {
       });
     });
 
-    scanBloc.scanFocusStream.listen((_){
-      FocusScope.of(context).requestFocus(_scanFocusNode);
+    scanBloc.scanFocusStream.listen((_) {
+      try {
+        FocusScope.of(context).requestFocus(_scanFocusNode);
+      } catch (e) {
+        print(e);
+        //catch "Looking up a deactivated widget's ancestor is unsafe"
+      }
     });
 
     return Padding(

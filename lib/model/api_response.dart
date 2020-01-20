@@ -15,7 +15,9 @@ class ApiResponse<T> {
     var result;
     if (T == Auth) {
       result = Auth.fromJson(json['result']);
-    } else if (T == UploadResult) {
+    } if (T == bool) {
+      result = json['result'] as bool;
+    }else if (T == UploadResult) {
       result = UploadResult.fromJson(json['result']);
     } else if (T.toString() == "List<ItemPacking>") {
       result = List<ItemPacking>.from(json["result"].map((x) => ItemPacking.fromJson(x)));

@@ -1,5 +1,6 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/bloc/bluetooth_bloc.dart';
+import 'package:ep_feedmill/mixin/simple_alert_dialog_mixin.dart';
 import 'package:ep_feedmill/module/bluetooth_module.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/premix/bloc/premix_bloc.dart';
@@ -15,16 +16,21 @@ class Weighing extends StatefulWidget {
 
 class _WeighingState extends State<Weighing> {
   TextEditingController weightController;
+  TextEditingController otpController;
+  final _otpFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     weightController = TextEditingController();
+    otpController = TextEditingController();
   }
 
   @override
   void dispose() {
     weightController.dispose();
+    otpController.dispose();
+    _otpFocusNode.dispose();
     super.dispose();
   }
 
@@ -65,14 +71,14 @@ class _WeighingState extends State<Weighing> {
             children: <Widget>[
               Expanded(
                 child: StreamBuilder<bool>(
-                    stream: weighingBloc.isWeighingByBtStream,
+                    stream: weighingBloc.isWeighingEditable,
                     builder: (context, snapshot) {
-                      bool isBt = false;
+                      bool isEditable = false;
                       if (snapshot.hasData) {
-                        isBt = snapshot.data;
+                        isEditable = snapshot.data;
                       }
                       return TextFormField(
-                        enabled: !isBt,
+                        enabled: isEditable,
                         controller: weightController,
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
@@ -145,7 +151,71 @@ class _WeighingState extends State<Weighing> {
                 ),
               );
             }),
-        SizedBox(height: 240),
+        SizedBox(height: 185),
+        StreamBuilder<bool>(
+            stream: weighingBloc.isAllowManualStream,
+            initialData: false,
+            builder: (context, snapshot) {
+              final isAllow = snapshot.data;
+              if (isAllow) {
+                return Container(height: 55);
+              }
+              return SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                  child: RaisedButton.icon(
+                    onPressed: () {
+                      FocusScope.of(context).requestFocus(_otpFocusNode);
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Enter Password for Manual Weight"),
+                              content: TextField(
+                                focusNode: _otpFocusNode,
+                                controller: otpController,
+                                keyboardType: TextInputType.numberWithOptions(),
+                                decoration: InputDecoration(labelText: Strings.password),
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text(Strings.cancel.toUpperCase()),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text("Verify".toUpperCase()),
+                                  onPressed: () async {
+                                    final res = await weighingBloc
+                                        .verifyPasswordForManual(otpController.text);
+                                    if (res) {
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return SimpleAlertDialog(
+                                              title: Strings.error,
+                                              message: "Failed",
+                                            );
+                                          });
+                                    }
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    icon: Icon(Icons.cast_connected),
+                    label: Text(
+                      Strings.manualWeigt.toUpperCase(),
+                    ),
+                  ),
+                ),
+              );
+            }),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

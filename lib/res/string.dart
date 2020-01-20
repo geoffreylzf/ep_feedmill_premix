@@ -26,12 +26,14 @@ class Strings {
   static const testPrint = "Test Print";
   static const back = "Back";
   static const cancel = "Cancel";
+  static const verify = "Verify";
   static const barcode = "Barcode";
   static const history = "History";
   static const login = "Login";
   static const complete = "Complete";
   static const add = "Add";
   static const autoAdd = "Auto Add";
+  static const manualWeigt = "Manual Weight";
   static const address = "Address";
   static const status = "Status";
   static const batch = "Batch";

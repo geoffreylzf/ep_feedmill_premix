@@ -27,6 +27,7 @@ class ApiModule {
   static const _planCheckListModule = "apiMobileFeedmill/getPlanCheckList";
   static const _updatePlanCheckListModule = "apiMobileFeedmill/updatePlanCheckList";
   static const _uploadModule = "apiMobileFeedmill/upload";
+  static const _verifyOTP = "apiMobileFeedmill/verifyOTP";
 
   Future<String> constructUrl(String module) async {
     final isLocal = await SharedPreferencesModule().getLocalCheck() ?? false;
@@ -128,6 +129,17 @@ class ApiModule {
       body: jsonEncode(uploadBody.toJson()),
     );
 
+    return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
+  }
+
+  Future<ApiResponse<bool>> verifyOTP(String password) async {
+    final user = await SharedPreferencesModule().getUser();
+    String basicAuth = user.getCredential();
+
+    final response = await http.get(
+      await constructUrl(_verifyOTP) + "&password="+password,
+      headers: {'authorization': basicAuth},
+    );
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
   }
 }
