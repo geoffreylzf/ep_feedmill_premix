@@ -17,7 +17,6 @@ class Weighing extends StatefulWidget {
 class _WeighingState extends State<Weighing> {
   TextEditingController weightController;
   TextEditingController otpController;
-  final _otpFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -30,7 +29,6 @@ class _WeighingState extends State<Weighing> {
   void dispose() {
     weightController.dispose();
     otpController.dispose();
-    _otpFocusNode.dispose();
     super.dispose();
   }
 
@@ -166,14 +164,13 @@ class _WeighingState extends State<Weighing> {
                   padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                   child: RaisedButton.icon(
                     onPressed: () {
-                      FocusScope.of(context).requestFocus(_otpFocusNode);
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text("Enter Password for Manual Weight"),
                               content: TextField(
-                                focusNode: _otpFocusNode,
+                                autofocus: true,
                                 controller: otpController,
                                 keyboardType: TextInputType.numberWithOptions(),
                                 decoration: InputDecoration(labelText: Strings.password),

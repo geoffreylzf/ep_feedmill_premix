@@ -11,7 +11,7 @@ class PremixScanBloc extends BlocBase {
   final _isItemPackingSelectedSubject = BehaviorSubject<bool>.seeded(false);
   final _isAllowAddonSubject = BehaviorSubject<bool>.seeded(false);
 
-  final _scanFocusSubject = BehaviorSubject<void>.seeded(0);
+  final _scanFocusSubject = BehaviorSubject<bool>.seeded(false);
 
   Stream<SelectedItemPacking> get selectedItemPackingStream => _selectedItemPackingSubject.stream;
 
@@ -19,7 +19,7 @@ class PremixScanBloc extends BlocBase {
 
   Stream<bool> get isAllowAddonStream => _isAllowAddonSubject.stream;
 
-  Stream<void> get scanFocusStream => _scanFocusSubject.stream;
+  Stream<bool> get scanFocusStream => _scanFocusSubject.stream;
 
   @override
   void dispose() {
@@ -47,7 +47,8 @@ class PremixScanBloc extends BlocBase {
   clearSelectedItemPacking() {
     _selectedItemPackingSubject.add(null);
     _isItemPackingSelectedSubject.add(false);
-    _scanFocusSubject.add(null);
+    _scanFocusSubject.add(true);
+    _scanFocusSubject.add(false);
   }
 
   _recursiveSumAllIntChar(String str) {

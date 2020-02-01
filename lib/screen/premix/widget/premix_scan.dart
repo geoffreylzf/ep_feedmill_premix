@@ -11,11 +11,13 @@ class Scan extends StatefulWidget {
 }
 
 class _ScanState extends State<Scan> {
+  final key = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        CodeInput(),
+        CodeInput(key: key),
         SelectedIngredient(),
       ],
     );
@@ -23,6 +25,8 @@ class _ScanState extends State<Scan> {
 }
 
 class CodeInput extends StatefulWidget {
+  CodeInput({Key key}) : super(key: key);
+
   @override
   _CodeInputState createState() => _CodeInputState();
 }
@@ -53,12 +57,9 @@ class _CodeInputState extends State<CodeInput> {
       });
     });
 
-    scanBloc.scanFocusStream.listen((_) {
-      try {
+    scanBloc.scanFocusStream.listen((b) {
+      if (b) {
         FocusScope.of(context).requestFocus(_scanFocusNode);
-      } catch (e) {
-        print(e);
-        //catch "Looking up a deactivated widget's ancestor is unsafe"
       }
     });
 
