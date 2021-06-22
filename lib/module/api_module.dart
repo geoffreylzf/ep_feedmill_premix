@@ -22,7 +22,7 @@ class ApiModule {
   static const _globalUrl = "http://epgroup.dyndns.org:8833/eperp/index.php?r=";
   static const _localUrl = "http://192.168.8.1:8833/eperp/index.php?r=";
 
-  static const _loginModule = "apiMobileAuth/login";
+  static const _loginModule = "apiMobileAuth/NonGoogleAccLogin";
   static const _housekeepingModule = "apiMobileFeedmill/getHouseKeeping";
   static const _planCheckListModule = "apiMobileFeedmill/getPlanCheckList";
   static const _updatePlanCheckListModule = "apiMobileFeedmill/updatePlanCheckList";
@@ -44,13 +44,12 @@ class ApiModule {
     throw Exception('Connection Failed');
   }
 
-  Future<ApiResponse<Auth>> login(String username, String password, String email) async {
+  Future<ApiResponse<Auth>> login(String username, String password) async {
     String basicAuth = User(username, password).getCredential();
 
     final response = await http.post(
       await constructUrl(_loginModule),
       headers: {'authorization': basicAuth},
-      body: {"email": email},
     );
 
     return ApiResponse.fromJson(jsonDecode(validateResponse(response)));
