@@ -6,7 +6,6 @@ import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/widget/local_check_box.dart';
 import 'package:ep_feedmill/widget/simple_alert_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

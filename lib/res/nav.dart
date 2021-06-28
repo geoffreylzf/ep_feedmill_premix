@@ -85,6 +85,15 @@ class NavDrawerStart extends StatelessWidget {
           ),
           Divider(),
           ListTile(
+            leading: Icon(Icons.update),
+            title: Text("Update App Version"),
+            onTap: () {
+              Navigator.pop(mainContext);
+              Navigator.pushNamed(mainContext, Routes.updateAppVer);
+            },
+          ),
+          Divider(),
+          ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text(Strings.logout),
             onTap: () async {

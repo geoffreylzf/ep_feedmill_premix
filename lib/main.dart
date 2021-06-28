@@ -12,12 +12,17 @@ import 'package:ep_feedmill/screen/plan_check_list/plan_check_list_screen.dart';
 import 'package:ep_feedmill/screen/premix_history/premix_history_screen.dart';
 import 'package:ep_feedmill/screen/setting/setting_screen.dart';
 import 'package:ep_feedmill/screen/upload/upload_screen.dart';
+import 'package:ep_feedmill/screen/update_app_ver/update_app_ver_screen.dart';
 import 'package:ep_feedmill/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
-void main() => runApp(App());
+void main() => runApp(
+      App(),
+    );
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class App extends StatelessWidget {
   final store = Store<int>(
@@ -37,6 +42,7 @@ class App extends StatelessWidget {
       child: MaterialApp(
         theme: appTheme(context),
         title: Strings.appName,
+        navigatorObservers: [routeObserver],
         home: FutureBuilder<User>(
           future: SharedPreferencesModule().getUser(),
           builder: (context, snapshot) {
@@ -54,6 +60,7 @@ class App extends StatelessWidget {
           Routes.premixHistory: (context) => PremixHistoryScreen(),
           Routes.upload: (context) => UploadScreen(),
           Routes.planCheckList: (context) => PlanCheckListScreen(),
+          Routes.updateAppVer: (context) => UpdateAppVerScreen(),
         },
       ),
     );

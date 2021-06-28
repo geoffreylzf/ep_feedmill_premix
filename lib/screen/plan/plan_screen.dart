@@ -1,5 +1,6 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/db/dao/mrf_premix_plan_doc_dao.dart';
+import 'package:ep_feedmill/main.dart';
 import 'package:ep_feedmill/res/string.dart';
 import 'package:ep_feedmill/screen/plan/bloc/plan_bloc.dart';
 import 'package:ep_feedmill/screen/plan/widget/plan_batch_selection.dart';
@@ -16,7 +17,7 @@ class PlanScreen extends StatefulWidget {
   _PlanScreenState createState() => _PlanScreenState();
 }
 
-class _PlanScreenState extends State<PlanScreen> implements PlanDelegate {
+class _PlanScreenState extends State<PlanScreen> with RouteAware implements PlanDelegate {
   PlanBloc planBloc;
 
   @override
@@ -38,6 +39,24 @@ class _PlanScreenState extends State<PlanScreen> implements PlanDelegate {
       delegate: this,
       mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    //refresh this page widget because no database listener
+    setState(() {});
   }
 
   @override

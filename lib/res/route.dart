@@ -7,4 +7,5 @@ class Routes {
   static const premixHistory = "premixHistory";
   static const upload = "upload";
   static const planCheckList = "planCheckList";
+  static const updateAppVer = "updateAppVer";
 }

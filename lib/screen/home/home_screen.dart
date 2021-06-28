@@ -1,5 +1,6 @@
 import 'package:ep_feedmill/bloc/bloc_base.dart';
 import 'package:ep_feedmill/bloc/local_bloc.dart';
+import 'package:ep_feedmill/main.dart';
 import 'package:ep_feedmill/res/nav.dart';
 import 'package:ep_feedmill/res/route.dart';
 import 'package:ep_feedmill/res/string.dart';
@@ -18,7 +19,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> implements HomeDelegate {
+class _HomeScreenState extends State<HomeScreen> with RouteAware implements HomeDelegate {
   HomeBloc homeBloc;
   LocalBloc localBloc = LocalBloc();
 
@@ -38,6 +39,24 @@ class _HomeScreenState extends State<HomeScreen> implements HomeDelegate {
   void initState() {
     super.initState();
     homeBloc = HomeBloc(delegate: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    //refresh this page widget because no database listener
+    setState(() {});
   }
 
   @override
