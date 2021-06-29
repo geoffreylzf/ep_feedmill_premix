@@ -96,7 +96,8 @@ class PremixWeighingBloc extends BlocBase {
 
     _scanBloc.selectedItemPackingStream.listen((item) {
       if (item != null && !item.isError) {
-        if (item.weight > 0.05) {
+        // if weight bigger than 0.1, not able manual enter weight
+        if (item.weight > 0.1) {
           _isAllowManualSubject.add(false);
         } else {
           _isAllowManualSubject.add(true);
