@@ -38,6 +38,7 @@ class PremixBloc extends BlocBase {
   int _mrfPremixPlanDocId;
   int _batchNo;
   int _groupNo;
+  String _barcode;
 
   PremixBloc({
     @required PremixDelegate delegate,
@@ -46,6 +47,7 @@ class PremixBloc extends BlocBase {
     @required PremixTempBloc tempBloc,
     @required int mrfPremixPlanDocId,
     @required int batchNo,
+    @required String barcode,
   }) {
     _delegate = delegate;
     _scanBloc = scanBloc;
@@ -53,6 +55,7 @@ class PremixBloc extends BlocBase {
     _tempBloc = tempBloc;
     _mrfPremixPlanDocId = mrfPremixPlanDocId;
     _batchNo = batchNo;
+    _barcode = barcode;
 
     _init();
   }
@@ -183,7 +186,7 @@ class PremixBloc extends BlocBase {
       mrfPremixPlanDocId: _mrfPremixPlanDocId,
       batchNo: _batchNo,
       groupNo: _groupNo,
-      uuid: _groupNo.toString().padLeft(2, '0') + DateTime.now().millisecondsSinceEpoch.toString(),
+      uuid: _barcode,
       recipeName: plan.recipeName,
       docNo: plan.docNo,
       formulaCategoryId: plan.formulaCategoryId,

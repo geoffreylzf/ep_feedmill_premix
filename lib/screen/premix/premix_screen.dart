@@ -18,8 +18,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class PremixScreen extends StatefulWidget {
   final int mrfPremixPlanDocId;
   final int batchNo;
+  final String barcode;
 
-  PremixScreen({this.mrfPremixPlanDocId, this.batchNo});
+  PremixScreen({
+    this.mrfPremixPlanDocId,
+    this.batchNo,
+    this.barcode,
+  });
 
   @override
   _PremixScreenState createState() => _PremixScreenState();
@@ -57,6 +62,7 @@ class _PremixScreenState extends State<PremixScreen>
       weighingBloc: weighingBloc,
       mrfPremixPlanDocId: widget.mrfPremixPlanDocId,
       batchNo: widget.batchNo,
+      barcode: widget.barcode,
     );
     _tabController = TabController(vsync: this, length: 3);
   }
